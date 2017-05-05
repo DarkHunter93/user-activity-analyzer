@@ -20,7 +20,7 @@ app.use(morgan('dev'));
 app.post('/setup', function(req, res) {
 	if (req.body.login == undefined || req.body.login == null) {
 		return res.json({ success: false, message: 'req.body.login is null or undefined' });
-	} else if (req.body.password != undefined || req.body.password != null) {
+	} else if (req.body.password == undefined || req.body.password == null) {
 		return res.json({ success: false, message: 'req.body.password is null or undefined' });
 	} else {
 		var login = req.body.login;
