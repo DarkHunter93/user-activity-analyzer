@@ -79,7 +79,7 @@ apiRoutes.post('/authenticate', function(req, res) {
 				winston.info(`Token for ${req.body.login}: ${token}`);
 				console.log(`Token for ${req.body.login}: ${token}`);
 
-				res.json({
+				res.status(200).json({
 					success: true,
 					message: 'Enjoy your token!',
 					token: token
