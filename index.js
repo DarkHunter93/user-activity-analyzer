@@ -1,20 +1,23 @@
-var express 	= require('express');
+var express 		= require('express');
 var app         = express();
 var bodyParser  = require('body-parser');
 var morgan      = require('morgan');
 var mongoose    = require('mongoose');
+var jwt    			= require('jsonwebtoken');
+var winston 		= require('winston');
+var path 				= require('path');
+var config 			= require('./config');
+var User   			= require('./app/models/user');
 
-var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
-var config = require('./config'); // get our config file
-var User   = require('./app/models/user'); // get our mongoose model
+winston.add(winston.transports.File, { filename: './public/server.log' });
 
 var port = process.env.PORT || 8080;
-mongoose.connect(config.database); // connect to database
-app.set('superSecret', config.secret); // secret variable
+mongoose.connect(config.database);
+app.set('superSecret', config.secret);
 
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(morgan('dev'));
 
 app.post('/setup', function(req, res) {
@@ -44,16 +47,15 @@ app.post('/setup', function(req, res) {
 });
 
 app.get('/', function(req, res) {
-	res.send('Hello! The API is at http://localhost:' + port + '/api');
+  winston.info('GET /');
+  res.send('Hello! The API is at http://localhost:' + port + '/api');
 });
 
 // get an instance of the router for api routes
 var apiRoutes = express.Router();
 
 apiRoutes.post('/authenticate', function(req, res) {
-
-	console.log("Authentication for login: " + req.body.login);
-	console.log("Authentication for password: " + req.body.password);
+	winston.info(`POST /api/authenticate with body: ${JSON.stringify(req.body)}`);
 
 	User.findOne({
 		login: req.body.login
@@ -74,8 +76,7 @@ apiRoutes.post('/authenticate', function(req, res) {
 				var token = jwt.sign(user, app.get('superSecret'), {
 					expiresIn: 3600 // 1 hour
 				});
-
-				console.log(`Authentication for user with login: ${req.body.login} and password: ${req.body.password} successful`);
+				winston.info(`Token for user with login: ${req.body.login}: ${token}`);
 				console.log(`Token for user with login: ${req.body.login}: ${token}`);
 
 				res.json({
