@@ -18,21 +18,27 @@ app.use(bodyParser.json());
 app.use(morgan('dev'));
 
 app.post('/setup', function(req, res) {
-	var login = req.body.login;
-	var password = req.body.password;
+	if (req.body.login == undefined || req.body.login == null) {
+		return res.json({ success: false, message: 'req.body.login is null or undefined' });
+	} else if (req.body.password != undefined || req.body.password != null) {
+		return res.json({ success: false, message: 'req.body.password is null or undefined' });
+	} else {
+		var login = req.body.login;
+		var password = req.body.password;
 
-	var nick = new User({
-		login: login,
-		password: password,
-		admin: false
-	});
+		var nick = new User({
+			login: login,
+			password: password,
+			admin: false
+		});
 
-	nick.save(function(err) {
-		if (err) throw err;
+		nick.save(function(err) {
+			if (err) throw err;
 
-		console.log('User saved successfully');
-		res.json({ success: true });
-	});
+			console.log('User saved successfully');
+			res.json({ success: true });
+		});
+	}
 });
 
 app.get('/', function(req, res) {
@@ -54,16 +60,21 @@ apiRoutes.post('/authenticate', function(req, res) {
 		if (err) throw err;
 
 		if (!user) {
+			console.log(`Authentication for user with login: ${req.body.login} and password: ${req.body.password} failed. User not found`);
 			res.json({ success: false, message: 'Authentication failed. User not found.' });
 		} else if (user) {
 
 			if (user.password != req.body.password) {
+				console.log(`Authentication for user with login: ${req.body.login} and password: ${req.body.password} failed. Wrong password`);
 				res.json({ success: false, message: 'Authentication failed. Wrong password.' });
 			} else {
 
 				var token = jwt.sign(user, app.get('superSecret'), {
 					expiresIn: 3600 // 1 hour
 				});
+
+				console.log(`Authentication for user with login: ${req.body.login} and password: ${req.body.password} successful`);
+				console.log(`Token for user with login: ${req.body.login}: ${token}`);
 
 				res.json({
 					success: true,
