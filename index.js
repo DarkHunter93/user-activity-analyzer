@@ -18,6 +18,8 @@ app.use(bodyParser.json());
 app.use(morgan('dev'));
 
 app.post('/setup', function(req, res) {
+	console.log(`req.body.login: ${req.body.login}, req.body.password: ${req.body.password}`);
+
 	if (req.body.login == undefined || req.body.login == null) {
 		return res.json({ success: false, message: 'req.body.login is null or undefined' });
 	} else if (req.body.password == undefined || req.body.password == null) {
