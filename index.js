@@ -21,7 +21,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(morgan('dev'));
 
 app.post('/setup', function(req, res) {
-	console.log(`req.body.login: ${req.body.login}, req.body.password: ${req.body.password}`);
+	winston.info(`POST /setup with body: ${JSON.stringify(req.body)}`);
+	console.log(`POST /setup with body: ${JSON.stringify(req.body)}`);
 
 	if (req.body.login == undefined || req.body.login == null) {
 		return res.json({ success: false, message: 'req.body.login is null or undefined' });
@@ -51,7 +52,6 @@ app.get('/', function(req, res) {
   res.send('Hello! The API is at http://localhost:' + port + '/api');
 });
 
-// get an instance of the router for api routes
 var apiRoutes = express.Router();
 
 apiRoutes.post('/authenticate', function(req, res) {
@@ -76,8 +76,8 @@ apiRoutes.post('/authenticate', function(req, res) {
 				var token = jwt.sign(user, app.get('superSecret'), {
 					expiresIn: 3600 // 1 hour
 				});
-				winston.info(`Token for user with login: ${req.body.login}: ${token}`);
-				console.log(`Token for user with login: ${req.body.login}: ${token}`);
+				winston.info(`Token for ${req.body.login}: ${token}`);
+				console.log(`Token for ${req.body.login}: ${token}`);
 
 				res.json({
 					success: true,
@@ -112,11 +112,8 @@ apiRoutes.use(function(req, res, next) {
 	}
 });
 
-apiRoutes.get('/', function(req, res) {
-	res.json({ message: 'Welcome to the API!' });
-});
-
 apiRoutes.get('/check', function(req, res) {
+	winston.info(`GET /api/check with query.token: ${req.query.token}`);
 	res.json(req.decoded);
 });
 
