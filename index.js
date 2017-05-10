@@ -96,7 +96,7 @@ apiRoutes.post('/login', function(req, res) {
 });
 
 apiRoutes.use(function(req, res, next) {
-	var token = req.body.token || req.params.token;
+	var token = req.body.token || req.query.token;
 
 	if (token) {
 		JWT.verify(token, app.get('superSecret'), (error, decoded) => {
