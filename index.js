@@ -7,9 +7,10 @@ var JWT    			= require('jsonwebtoken');
 var winston 		= require('winston');
 var path 				= require('path');
 var url					= require('url');
+const UUID      = require('uuid/v4');
 var config 			= require('./config');
 var User   			= require('./app/models/user');
-var History			= require('./app/models/history');
+var History     = require('./app/models/history');
 
 winston.add(winston.transports.File, { filename: './public/server.log' });
 
@@ -34,9 +35,12 @@ app.post('/register', function(req, res) {
 		return res.status(400).json({ success: false, message: 'Login is null or undefined' });
 	} else if (req.body.password == undefined || req.body.password == null) {
 		return res.status(400).json({ success: false, message: 'Password is null or undefined' });
+	} else if (req.body.email == undefined || req.body.email == null) {
+		return res.status(400).json({ success: false, message: 'Email is null or undefined' });
 	} else {
 		var login = req.body.login;
 		var password = req.body.password;
+    var email = req.body.email;
 
 		User.findOne({
 			login: req.body.login
@@ -48,9 +52,10 @@ app.post('/register', function(req, res) {
 			} else {
 
 				var user = new User({
+          id: UUID(),
 					login: login,
 					password: password,
-					admin: false
+          email: email
 				});
 
 				user.save((error) => {
@@ -100,8 +105,6 @@ apiRoutes.post('/login', function(req, res) {
 apiRoutes.use(function(req, res, next) {
 	var token = req.body.token || req.query.token;
 
-	console.log("TOKEN TOKEN TOKEN: " + token);
-
 	if (token) {
 		JWT.verify(token, app.get('superSecret'), (error, decoded) => {
 			if (error) {
@@ -122,6 +125,7 @@ apiRoutes.use(function(req, res, next) {
 apiRoutes.get('/check', function(req, res) {
 	winston.info(`GET /api/check with query.token: ${req.query.token}`);
 	res.json({
+    id: req.decoded._doc.id,
 		login: req.decoded._doc.login,
 		password: req.decoded._doc.password,
 		admin: req.decoded._doc.admin
@@ -131,6 +135,7 @@ apiRoutes.get('/check', function(req, res) {
 apiRoutes.post('/check', function(req, res) {
 	winston.info(`POST /api/check with token: ${req.query.token}`);
 	res.json({
+    id: req.decoded._doc.id,
 		login: req.decoded._doc.login,
 		password: req.decoded._doc.password,
 		admin: req.decoded._doc.admin
@@ -189,13 +194,13 @@ apiRoutes.post('/history', (req, res) => {
 	winston.info(`POST /api/history with body: ${JSON.stringify(req.body)}`);
 
 	History.create({
-		owner: req.decoded._doc.login,
+		ownerId: req.decoded._doc.id,
 		url: req.body.url,
 		parentUrl: req.body.parentUrl,
 		time: req.body.time
 	}, function(error) {
 		if (error) {
-			if (error.errors['owner']) {
+			if (error.errors['ownerId']) {
 				return res.json({ success: false, message: error.errors['owner'].message});
 			} else if (error.errors['url']) {
 				return res.json({ success: false, message: error.errors['url'].message});
@@ -207,7 +212,7 @@ apiRoutes.post('/history', (req, res) => {
 				return res.json({ success: false, message: 'Unidentified error 001'});
 			}
 		} else {
-			return res.json({ success: true, message: 'History record saved succesfully'});
+			return res.json({ success: true, message: 'History record saved succesfully' });
 		}
 	});
 });

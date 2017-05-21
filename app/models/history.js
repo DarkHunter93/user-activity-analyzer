@@ -2,21 +2,25 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 module.exports = mongoose.model('History', new Schema({
-  owner: {
-    type: String,
-    required: true
+  ownerId: String,
+  url: {
+    domain: String,
+    full: String,
+    path: String,
+    query: Schema.Types.Mixed,
+    protocol: String,
+    port: String
   },
-	url: {
-    type: String,
-    required: true
-  },
-	parentUrl: {
-    type: String,
-    required: true
+  parentUrl: {
+    domain: String,
+    full: String,
+    path: String,
+    query: Schema.Types.Mixed,
+    protocol: String,
+    port: String
   },
 	time: {
     type: String,
-    default: Date.now,
-    required: true
+    default: Date.now
   }
 }));
