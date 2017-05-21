@@ -106,16 +106,25 @@ Send a `POST` request to `/api/history/` with JSON:
 
 [This](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now) format of time is required.
 
-### Searching history (outdated!)
+### Searching history
 
-Send a `GET` request with URL parameters:
-* `user` - **required**, owner of record
-* `url` - **required**, what page is searching for
-* `token` - **required**
-* `offset` - **optional**
-* `limit` - **optional**
+Send a `POST` request to `/api/get-history-commands` with JSON:
+```json
+{
+	"limit": 10,
+	"offset": 0,
+	"searchingProperties": {
+		"parentUrl.full": "www.google.com/",
+		"url.port": "4536",
+		"ownerId": "bb63cbf7-9bde-4e65-91eb-a128d4ce8c50"
+	},
+	"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyIkX18iOnsic3RyaWN0TW9kZSI6dHJ1ZSwic2VsZWN0ZWQiOnt9LCJnZXR0ZXJzIjp7fSwid2FzUG9wdWxhdGVkIjpmYWxzZSwiYWN0aXZlUGF0aHMiOnsicGF0aHMiOnsiYWRtaW4iOiJpbml0IiwiX192IjoiaW5pdCIsImVtYWlsIjoiaW5pdCIsInBhc3N3b3JkIjoiaW5pdCIsImxvZ2luIjoiaW5pdCIsImlkIjoiaW5pdCIsIl9pZCI6ImluaXQifSwic3RhdGVzIjp7Imlnbm9yZSI6e30sImRlZmF1bHQiOnt9LCJpbml0Ijp7Il9fdiI6dHJ1ZSwiYWRtaW4iOnRydWUsImVtYWlsIjp0cnVlLCJwYXNzd29yZCI6dHJ1ZSwibG9naW4iOnRydWUsImlkIjp0cnVlLCJfaWQiOnRydWV9LCJtb2RpZnkiOnt9LCJyZXF1aXJlIjp7fX0sInN0YXRlTmFtZXMiOlsicmVxdWlyZSIsIm1vZGlmeSIsImluaXQiLCJkZWZhdWx0IiwiaWdub3JlIl19LCJlbWl0dGVyIjp7ImRvbWFpbiI6bnVsbCwiX2V2ZW50cyI6e30sIl9ldmVudHNDb3VudCI6MCwiX21heExpc3RlbmVycyI6MH19LCJpc05ldyI6ZmFsc2UsIl9kb2MiOnsiYWRtaW4iOmZhbHNlLCJfX3YiOjAsImVtYWlsIjoiZGF3aWRAZ21haWwuY29tIiwicGFzc3dvcmQiOiIxMjM0NTYiLCJsb2dpbiI6IkRhd2lkIiwiaWQiOiJiYjYzY2JmNy05YmRlLTRlNjUtOTFlYi1hMTI4ZDRjZThjNTAiLCJfaWQiOiI1OTIxNmJiNDM2NWQwNTI0NTEwNTY4MGEifSwiaWF0IjoxNDk1MzY5MDgyLCJleHAiOjE0OTUzNzYyODJ9.yLjQ1F2Q5e5RFZJc08lwjmSJ4gQ5RoN1v1Ma2GnaEpY"
+}
+```
 
-For example: `/api/history?user=Dawid&url=www.antyweb.pl&limit=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyIkX18iOnsic3RyaWN0TW9kZSI6dHJ1ZSwic2VsZWN0ZWQiOnt9LCJnZXR0ZXJzIjp7fSwid2FzUG9wdWxhdGVkIjpmYWxzZSwiYWN0aXZlUGF0aHMiOnsicGF0aHMiOnsiX192IjoiaW5pdCIsImFkbWluIjoiaW5pdCIsInBhc3N3b3JkIjoiaW5pdCIsImxvZ2luIjoiaW5pdCIsIl9pZCI6ImluaXQifSwic3RhdGVzIjp7Imlnbm9yZSI6e30sImRlZmF1bHQiOnt9LCJpbml0Ijp7Il9fdiI6dHJ1ZSwiYWRtaW4iOnRydWUsInBhc3N3b3JkIjp0cnVlLCJsb2dpbiI6dHJ1ZSwiX2lkIjp0cnVlfSwibW9kaWZ5Ijp7fSwicmVxdWlyZSI6e319LCJzdGF0ZU5hbWVzIjpbInJlcXVpcmUiLCJtb2RpZnkiLCJpbml0IiwiZGVmYXVsdCIsImlnbm9yZSJdfSwiZW1pdHRlciI6eyJkb21haW4iOm51bGwsIl9ldmVudHMiOnt9LCJfZXZlbnRzQ291bnQiOjAsIl9tYXhMaXN0ZW5lcnMiOjB9fSwiaXNOZXciOmZhbHNlLCJfZG9jIjp7Il9fdiI6MCwiYWRtaW4iOmZhbHNlLCJwYXNzd29yZCI6IjU1NTU1NSIsImxvZ2luIjoiQWxpY2lhIEtleXMiLCJfaWQiOiI1OTEyZjgzMzNiNDg2OTE1M2MxYWI2NmMifSwiaWF0IjoxNDk0NDMwMDY3LCJleHAiOjE0OTQ0MzcyNjd9.gE3ZPcDclQDGwLAAoBASzj2axjY78LzE2XsCRKSkPrg`
+The properties: `limit` and `offset` are optional. Default value of `limit` is 100. Default value of `offset` is 0.
+
+The properties: `searchingProperties` and `token` are required.
 
 If everythink goes well you will get a JSON similar to this:
 
@@ -124,12 +133,26 @@ If everythink goes well you will get a JSON similar to this:
   "success": true,
   "data": [
     {
-      "_id": "59132eadf773d727582b588b",
-      "owner": "Dawid",
-      "url": "www.antyweb.pl",
-      "parentUrl": "www.google.com",
-      "__v": 0,
-      "time": "1494429357019"
+      "ownerId": "bb63cbf7-9bde-4e65-91eb-a128d4ce8c50",
+      "time": "1495362058727",
+      "parentUrl": {
+        "full": "www.google.com/",
+        "protocol": "HTTPS",
+        "domain": "www.google.com",
+        "port": "3258",
+        "path": "/"
+      },
+      "url": {
+        "full": "www.example.com/books?login=Dawid&password=555555",
+        "protocol": "HTTPS",
+        "domain": "www.example.com",
+        "port": "4536",
+        "path": "/books",
+        "query": {
+          "login": "Dawid",
+          "password": "555555"
+        }
+      }
     }
   ]
 }

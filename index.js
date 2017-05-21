@@ -142,52 +142,34 @@ apiRoutes.post('/check', function(req, res) {
 	});
 });
 
-apiRoutes.get('/history', (req, res) => {
-	winston.info(`POST /api/history user: ${req.query.user}, url: ${req.query.url}, offset: ${req.query.offset}, limit: ${req.query.limit}`);
+apiRoutes.post('/get-history-commands', (req, res) => {
+	// winston.info(`POST /api/history user: ${req.query.user}, url: ${req.query.url}, offset: ${req.query.offset}, limit: ${req.query.limit}`);
 
-	var user = req.query.user, url = req.query.url, offset = parseInt(req.query.offset) || 0,
-	 		limit = parseInt(req.query.limit) || 100;
+  var offset = parseInt(req.body.offset) || 0, limit = parseInt(req.body.limit) || 100;
 
-	if (user && url) {
-		History.
-		  find({
-				owner: user,
-				url: url
-		  }).
-			limit(limit).
-			skip(offset).
-			exec(function (error, data) {
-			  if (error) {
-					return res.json({
-						success: false,
-						message: `Unidentified error 003`
-					});
-				} else {
-					console.log(data);
-					return res.json({
-						success: true,
-						data: data
-					});
-				}
-			});
-	} else {
-		if (!user) {
-			return res.json({
-				success: false,
-				message: `User not found`
-			});
-		} else if (!url) {
-			return res.json({
-				success: false,
-				message: `Url not found`
-			});
-		} else {
-			return res.json({
-				success: false,
-				message: `Unidentified error 002`
-			});
-		}
-	}
+  var searchingProperties = req.body.searchingProperties;
+
+  if (searchingProperties) {
+  	History.
+  	  find(searchingProperties, '-_id -__v').
+  		limit(limit).
+  		skip(offset).
+  		exec(function (error, data) {
+  		  if (error) {
+  				return res.json({
+  					success: false,
+  					message: `Unidentified error 003`
+  				});
+  			} else {
+          return res.json({
+  					success: true,
+  					data: data
+  				});
+  			}
+  		});
+  } else {
+    return res.status(422).json({ success: false, message: `'searchingProperties' is null or undefined.` });
+  }
 });
 
 apiRoutes.post('/history', (req, res) => {
