@@ -19,9 +19,9 @@ var histories   = require('./app/routes/histories');
 var swaggerDefinition = {
   info: {
     title: 'User Activity Analyzer',
-    version: '0.0.4'
+    version: '0.4.0'
   },
-  host: 'localhost:8888', // optional
+  host: 'user-activity-analyzer.herokuapp.com', // optional
   basePath: '/',          // optional
 };
 
