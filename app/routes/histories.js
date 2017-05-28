@@ -1,7 +1,9 @@
 'use strict';
 
+var UUID        = require('uuid/v4');
 var config      = require('../../config');
 var History     = require('../models/history');
+var Website     = require('../models/website');
 
 module.exports.setup = (app, logger) => {
 
@@ -24,78 +26,78 @@ module.exports.setup = (app, logger) => {
  *           properties:
  *             token:
  *               type: string
- *               require: true
+ *               required: true
  *             offset:
  *               type: number
  *               example: 10
  *               default: 0
- *               require: false
+ *               required: false
  *             limit:
  *               type: number
  *               example: 200
  *               default: 100
- *               require: false
+ *               required: false
  *             searchingProperties:
  *               type: object
  *               properties:
  *                 ownerId:
  *                   type: string
  *                   example: bb63cbf7-9bde-4e65-91eb-a128d4ce8c50
- *                   require: false
+ *                   required: false
  *                 url.domain:
  *                   type: string
  *                   example: www.example.com
- *                   require: false
+ *                   required: false
  *                 url.full:
  *                   type: string
  *                   example: www.example.com/books?id=666666
- *                   require: false
+ *                   required: false
  *                 url.path:
  *                   type: string
  *                   example: /books
- *                   require: false
+ *                   required: false
  *                 url.query:
  *                   type: object
  *                   example: {
  *                     id: 666666
  *                   }
- *                   require: false
+ *                   required: false
  *                 url.protocol:
  *                   type: string
  *                   example: HTTPS
- *                   require: false
+ *                   required: false
  *                 url.port:
  *                   type: number
  *                   example: 6000
- *                   require: false
+ *                   required: false
  *                 parentUrl.domain:
  *                   type: string
  *                   example: www.google.com
- *                   require: false
+ *                   required: false
  *                 parentUrl.full:
  *                   type: string
  *                   example: www.google.com/
- *                   require: false
+ *                   required: false
  *                 parentUrl.path:
  *                   type: string
  *                   example: /
- *                   require: false
+ *                   required: false
  *                 parentUrl.query:
  *                   type: object
- *                   require: false
+ *                   required: false
  *                 parentUrl.protocol:
  *                   type: string
  *                   example: HTTPS
- *                   require: false
+ *                   required: false
  *                 parentUrl.port:
  *                   type: number
  *                   example: 5876
- *                   require: false
+ *                   required: false
  *                 time:
  *                   type: string
  *                   example: Fri May 26 2017 18:27:15 GMT+0200 (CEST)
  *                   required: false
- *               require: true
+ *               required: true
  *               description: Select only the properties you want to search
  *     responses:
  *       200:
@@ -180,56 +182,56 @@ app.post('/histories/search', (req, res) => {
  *                 domain:
  *                   type: string
  *                   example: www.example.com
- *                   require: true
+ *                   required: true
  *                 full:
  *                   type: string
  *                   example: www.example.com/books?id=666666
- *                   require: true
+ *                   required: true
  *                 path:
  *                   type: string
  *                   example: /books
- *                   require: false
+ *                   required: false
  *                 query:
  *                   type: object
  *                   example: {
  *                     id: 666666
  *                   }
- *                   require: false
+ *                   required: false
  *                 protocol:
  *                   type: string
  *                   example: HTTPS
- *                   require: false
+ *                   required: false
  *                 port:
  *                   type: number
  *                   example: 6000
- *                   require: false
+ *                   required: false
  *             parentUrl:
  *               type: object
  *               properties:
  *                 domain:
  *                   type: string
  *                   example: www.google.com
- *                   require: false
+ *                   required: false
  *                 full:
  *                   type: string
  *                   example: www.google.com/
- *                   require: false
+ *                   required: false
  *                 path:
  *                   type: string
  *                   example: /
- *                   require: false
+ *                   required: false
  *                 query:
  *                   type: object
- *                   require: false
+ *                   required: false
  *                 protocol:
  *                   type: string
  *                   example: HTTPS
- *                   require: false
+ *                   required: false
  *                 port:
  *                   type: number
  *                   example: 5876
- *                   require: false
- *               require: true
+ *                   required: false
+ *               required: true
  *             connection:
  *               type: object
  *               properties:
@@ -238,6 +240,16 @@ app.post('/histories/search', (req, res) => {
  *                   required: false
  *                 title:
  *                   type: string
+ *                   required: false
+ *             websiteContent:
+ *               type: object
+ *               properties:
+ *                 text:
+ *                   type: string
+ *                   example: "Lorem ipsum dolor sit amet enim. Etiam ullamcorper."
+ *                   required: true
+ *                 urls:
+ *                   type: array
  *                   required: false
  *             date:
  *               type: date
@@ -284,15 +296,17 @@ app.post('/histories/save', (req, res) => {
 
   logger.info(JSON.stringify(req.body));
 
-  History.create({
- 		ownerId: req.decoded._doc.id,
- 		url: req.body.url,
- 		parentUrl: req.body.parentUrl,
-    connection: req.body.connection,
- 		date: req.body.date
- 	}, (error) => {
+  var websiteId = UUID();
 
- 		if (error && error.errors) {
+  console.log(websiteId);
+  console.log(req.body.websiteContent);
+
+  Website.create({
+    id: websiteId,
+    websiteContent: req.body.websiteContent
+  }, (error) => {
+
+    if (error && error.errors) {
 
 			return res.status(422).json({ success: false, message: error.errors});
 
@@ -302,10 +316,30 @@ app.post('/histories/save', (req, res) => {
 
     } else {
 
- 			return res.status(201).json({ success: true, message: 'History record saved succesfully' });
+      History.create({
+     		ownerId: req.decoded._doc.id,
+        websiteId: websiteId,
+     		url: req.body.url,
+     		parentUrl: req.body.parentUrl,
+        connection: req.body.connection,
+     		date: req.body.date
+     	}, (error) => {
 
+     		if (error && error.errors) {
+
+    			return res.status(422).json({ success: false, message: error.errors});
+
+     		} else if (error) {
+
+          return res.status(500).json({ success: false, message: error});
+
+        } else {
+
+     			return res.status(201).json({ success: true, message: 'History record saved succesfully' });
+
+     		}
+      });
  		}
-
   });
 });
 
@@ -337,7 +371,7 @@ app.post('/histories/save', (req, res) => {
  *               type: number
  *               example: 200
  *               default: 100
- *               require: false
+ *               required: false
  *     responses:
  *       200:
  *         schema:
@@ -418,4 +452,100 @@ app.post('/histories/getPreviousWebsites', (req, res) => {
   }
 });
 
-};
+/**
+ * @swagger
+ * /histories/remove:
+ *   post:
+ *     description: Remove history record in database
+ *     tags: [Histories]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             token:
+ *               type: string
+ *               required: true
+ *             id:
+ *               type: string
+ *               example: 8ad0b41c-896e-43bd-bf9e-882f9162959e
+ *               required: true
+ *     responses:
+ *       200:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             success:
+ *               type: boolean
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: History item deleted successfully
+ *       422:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             success:
+ *               type: boolean
+ *               example: false
+ *             message:
+ *               type: string
+ *               example: "`url` is null or undefined"
+ *       403:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             success:
+ *               type: boolean
+ *               example: false
+ *             message:
+ *               type: string
+ *               example: "You don't have permission to perform this operation"
+ *       500:
+ *         description: Internal Server Error
+ */
+app.post('/histories/remove', (req, res) => {
+
+  logger.info(JSON.stringify(req.body));
+
+  if (req.decoded._doc.admin == true) {
+
+    if (req.body.id) {
+
+      History.remove({ id: id }, (error) => {
+
+        if (error) {
+
+          return res.status(500).json({ success: false, message: error});
+
+        } else {
+
+          return res.status(200).json({ success: true, message: 'History item deleted successfully' });
+
+        }
+      });
+
+    } else {
+
+      return res.status(422).json({ success: false, message: `'id' is null or undefined` });
+
+    }
+
+  } else {
+
+    /*
+    403: The server understood the request but refuses to authorize it
+    */
+
+    return res.status(403).json({ success: true, message: `You don't have permission to perform this operation` });
+
+  }
+});
+
+}
