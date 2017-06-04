@@ -419,211 +419,212 @@ app.get('/users', (req, res) => {
       });
 });
 
+/**
+ * @swagger
+ * /users/{userId}:
+ *   delete:
+ *     description: Remove user from the application
+ *     tags: [Users]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             success:
+ *               type: boolean
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: User has been removed correctly
+ *       409:
+ *         description: The token is expired
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: The token is expired
+ *       422:
+ *         description: userId is null or undefined
+ *         schema:
+ *           type: object
+ *           properties:
+ *             success:
+ *               type: boolean
+ *               example: false
+ *             message:
+ *               type: string
+ *               example: userId is null or undefined
+ *       500:
+ *         description: Internal Server Error
+ */
+app.delete('/users/:userId', (req, res) => {
 
-  /**
-   * @swagger
-   * /users:
-   *   delete:
-   *     description: Remove user from the application
-   *     tags: [Users]
-   *     consumes:
-   *       - application/json
-   *     produces:
-   *       - application/json
-   *     parameters:
-   *       - in: body
-   *         name: body
-   *         description: Token for user that needs to be removed in the database
-   *         required: true
-   *         schema:
-   *           type: object
-   *           properties:
-   *             token: string
-   *     responses:
-   *       200:
-   *         schema:
-   *           type: object
-   *           properties:
-   *             success:
-   *               type: boolean
-   *               example: true
-   *             message:
-   *               type: string
-   *               example: User has been removed correctly
-   *       422:
-   *         description: Login, password or email are null or undefined
-   *         schema:
-   *           type: object
-   *           properties:
-   *             success:
-   *               type: boolean
-   *               example: false
-   *             message:
-   *               type: string
-   *               example: Login is null or undefined
-   *       500:
-   *         description: Internal Server Error
-   */
-  app.delete('/users', (req, res) => {
+  logger.info(JSON.stringify(req.body));
 
-    logger.info(JSON.stringify(req.body));
+  if (req.params.userId) {
 
-    var login = req.decoded._doc.login, password = req.decoded._doc.password;
+    User.remove({ id: req.params.userId }, (error) => {
 
-    if (login && password) {
+      if (error) {
 
-      User.remove({ login: login, password: password }, (error) => {
+  			return res.status(500).json({ message: error });
 
-        if (error) {
+  		} else {
 
-    			return res.status(500).json({ success: false, message: error });
-
-    		} else {
-
-          return res.status(200).json({ success: true, message: 'User has been removed correctly' });
-
-        }
-      });
-
-    } else {
-
-      if (login == undefined || login == null) {
-
-    		return res.status(422).json({ success: false, message: 'Login is null or undefined' });
-
-    	} else if (password == undefined || password == null) {
-
-    		return res.status(422).json({ success: false, message: 'Password is null or undefined' });
-
-    	} else {
-
-        return res.status(500).json({ success: false, message: 'Unidentified error 0001' });
+        return res.status(200).json({ message: 'User has been removed correctly' });
 
       }
-    }
-  });
+    });
 
-  /**
-   * @swagger
-   * /users:
-   *   put:
-   *     description: Update user account
-   *     tags: [Users]
-   *     consumes:
-   *       - application/json
-   *     produces:
-   *       - application/json
-   *     parameters:
-   *       - in: body
-   *         name: body
-   *         description: |
-   *           Token and one or more property for user that needs to be updated
-   *           in the database. Each update requires a re-login.
-   *         required: true
-   *         schema:
-   *           type: object
-   *           properties:
-   *             token:
-   *               type: string
-   *               required: true
-   *             newLogin:
-   *               type: string
-   *               example: Bunny
-   *               required: false
-   *             newPassword:
-   *               type: string
-   *               example: iLikeBunnies
-   *               required: false
-   *             newEmail:
-   *               type: string
-   *               example: bunny@gmail.com
-   *               required: false
-   *     responses:
-   *       200:
-   *         description: User updated successfully
-   *         schema:
-   *           type: object
-   *           properties:
-   *             success:
-   *               type: boolean
-   *               example: true
-   *             message:
-   *               type: string
-   *               example: User updated successfully
-   *       422:
-   *         description: None of the properties (newLogin, newPassword, newEmail) have been sent
-   *         schema:
-   *           type: object
-   *           properties:
-   *             success:
-   *               type: boolean
-   *               example: false
-   *             message:
-   *               type: string
-   *               example: Nothing to update
-   *       500:
-   *         description: Internal Server Error
-   */
-  app.put('/users', (req, res) => {
+  } else {
 
-    logger.info(JSON.stringify(req.body));
+		return res.status(422).json({ message: 'userId is null or undefined' });
 
-    var login = req.decoded._doc.login, newLogin = req.body.newLogin,
-        newPassword = req.body.newPassword, newEmail = req.body.newEmail,
-        update = {};
+  }
+});
 
-    var query = { login: login };
+/**
+ * @swagger
+ * /users/{userId}:
+ *   put:
+ *     description: Update user account
+ *     tags: [Users]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: |
+ *           Token and one or more property for user that needs to be updated
+ *           in the database. Each update requires a re-login.
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             token:
+ *               type: string
+ *               required: true
+ *             newLogin:
+ *               type: string
+ *               example: Bunny
+ *               required: false
+ *             newPassword:
+ *               type: string
+ *               example: iLikeBunnies
+ *               required: false
+ *             newEmail:
+ *               type: string
+ *               example: bunny@gmail.com
+ *               required: false
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *         schema:
+ *           type: object
+ *           properties:
+ *             success:
+ *               type: boolean
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: User updated successfully
+ *       422:
+ *         description: None of the properties (newLogin, newPassword, newEmail) have been sent
+ *         schema:
+ *           type: object
+ *           properties:
+ *             success:
+ *               type: boolean
+ *               example: false
+ *             message:
+ *               type: string
+ *               example: Nothing to update
+ *       500:
+ *         description: Internal Server Error
+ */
+app.put('/users', (req, res) => {
 
-    async.waterfall([
-      (callback) => {
+  logger.info(JSON.stringify(req.body));
 
-        if (!newLogin && !newPassword && !newEmail) {
+  var userId = req.params.userId, newLogin = req.body.newLogin,
+      newPassword = req.body.newPassword, newEmail = req.body.newEmail,
+      update = {};
 
-          return res.status(422).json({ success: false, message: 'Nothing to update' });
+  var query = { login: login };
 
-        } else if (newLogin) {
+  // var promise = new Promise(function(resolve, reject) {
+  //   // do a thing, possibly async, then…
+  //
+  //   if (/* everything turned out fine */) {
+  //     resolve("Stuff worked!");
+  //   }
+  //   else {
+  //     reject(Error("It broke"));
+  //   }
+  // });
 
-          User.findOne({ login: newLogin }, (error, user) => {
+  async.waterfall([
+    (callback) => {
 
-            if (error) {
+      if (!newLogin && !newPassword && !newEmail) {
 
-              return res.status(500).json({ success: false, message: error });
+        return res.status(422).json({ success: false, message: 'Nothing to update' });
 
-            } else if (user) {
+      } else if (newLogin) {
 
-              return res.status(409).json({ success: false, message: 'Login is already in use' });
+        User.findOne({ login: newLogin }, (error, user) => {
 
-            } else {
-
-              update.login = newLogin;
-              callback(null);
-
-            }
-          });
-        } else {
-
-          callback(null);
-
-        };
-      },
-      (callback) => {
-
-        if (newPassword) { update.password = newPassword };
-
-        if (newEmail) { update.email = newEmail };
-
-        User.findOneAndUpdate(query, update, (error, user) => {
           if (error) {
 
             return res.status(500).json({ success: false, message: error });
 
+          } else if (user) {
+
+            return res.status(409).json({ success: false, message: 'Login is already in use' });
+
           } else {
 
-            return res.status(200).json({ success: true, message: 'User updated successfully'});
+            update.login = newLogin;
+            callback(null);
 
           }
         });
-      }
-    ]);
-  });
+      } else {
+
+        callback(null);
+
+      };
+    },
+    (callback) => {
+
+      if (newPassword) { update.password = newPassword };
+
+      if (newEmail) { update.email = newEmail };
+
+      User.findOneAndUpdate(query, update, (error, user) => {
+        if (error) {
+
+          return res.status(500).json({ success: false, message: error });
+
+        } else {
+
+          return res.status(200).json({ success: true, message: 'User updated successfully'});
+
+        }
+      });
+    }
+  ]);
+});
 };
