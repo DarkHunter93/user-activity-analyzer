@@ -1,10 +1,10 @@
 'use strict';
 
 var JWT         = require('jsonwebtoken');
-var async       = require('async');
 var UUID        = require('uuid/v4');
 var config      = require('../../config');
 var User        = require('../models/user');
+var Database    = require('../database');
 
 module.exports.setup = function(app, logger) {
 
@@ -28,21 +28,27 @@ module.exports.setup = function(app, logger) {
  *           properties:
  *             login:
  *               type: string
- *               example: Madonna
+ *               required: true
  *             password:
  *               type: string
- *               example: bitchIAmMadonna
+ *               required: true
  *             email:
  *               type: string
- *               example: queen@madonna.com
+ *               required: true
+ *             birthdate:
+ *               type: date
+ *               required: false
+ *             gender:
+ *               type: string
+ *               required: false
+ *             province:
+ *               type: string
+ *               required: false
  *     responses:
  *       201:
  *         schema:
  *           type: object
  *           properties:
- *             success:
- *               type: boolean
- *               example: true
  *             message:
  *               type: string
  *               example: User registered successfully
@@ -51,15 +57,12 @@ module.exports.setup = function(app, logger) {
  *               properties:
  *                 id: string
  *                 login: string
- *                 password: string
  *                 email: string
  *       409:
+ *         description: Login is already in use
  *         schema:
  *           type: object
  *           properties:
- *             success:
- *               type: boolean
- *               example: false
  *             message:
  *               type: string
  *               example: Login is already in use
@@ -68,9 +71,6 @@ module.exports.setup = function(app, logger) {
  *         schema:
  *           type: object
  *           properties:
- *             success:
- *               type: boolean
- *               example: false
  *             message:
  *               type: string
  *               example: Login is null or undefined
@@ -91,15 +91,15 @@ app.post('/users/register', function(req, res) {
     instructions.
     */
 
-		return res.status(422).json({ success: false, message: 'Login is null or undefined' });
+		return res.status(422).json({ message: 'Login is null or undefined' });
 
 	} else if (req.body.password == undefined || req.body.password == null) {
 
-		return res.status(422).json({ success: false, message: 'Password is null or undefined' });
+		return res.status(422).json({ message: 'Password is null or undefined' });
 
 	} else if (req.body.email == undefined || req.body.email == null) {
 
-		return res.status(422).json({ success: false, message: 'Email is null or undefined' });
+		return res.status(422).json({ message: 'Email is null or undefined' });
 
 	} else {
 
@@ -114,7 +114,7 @@ app.post('/users/register', function(req, res) {
         from fulfilling the request.
         */
 
-        return res.status(500).json({ success: false, message: error });
+        return res.status(500).json({ message: error });
 
 			} else if (user) {
 
@@ -124,7 +124,7 @@ app.post('/users/register', function(req, res) {
         user might be able to resolve the conflict and resubmit the request.
         */
 
-				return res.status(409).json({ success: false, message: 'Login is already in use' });
+				return res.status(409).json({ message: 'Login is already in use' });
 
 			} else {
 
@@ -132,13 +132,17 @@ app.post('/users/register', function(req, res) {
           id: UUID(),
 					login: login,
 					password: password,
-          email: email
+          email: email,
+          birthdate: req.body.birthdate,
+          gender: req.body.gender,
+          province: req.body.province
 				});
 
 				user.save((error) => {
+
           if (error) {
 
-            return res.status(500).json({ success: false, message: error });
+            return res.status(500).json({ message: error });
 
           } else {
 
@@ -148,12 +152,10 @@ app.post('/users/register', function(req, res) {
             */
 
             return res.status(201).json({
-              success: true,
               message: 'User registered successfully',
               user: {
                 id: user.id,
                 login: user.login,
-                password: user.password,
                 email: user.email
               }
             });
@@ -194,9 +196,6 @@ app.post('/users/register', function(req, res) {
  *         schema:
  *           type: object
  *           properties:
- *             success:
- *               type: boolean
- *               example: true
  *             message:
  *               type: string
  *               example: User logged in successfully
@@ -207,9 +206,6 @@ app.post('/users/register', function(req, res) {
  *         schema:
  *           type: object
  *           properties:
- *             success:
- *               type: boolean
- *               example: false
  *             message:
  *               type: string
  *               example: User not found
@@ -218,9 +214,6 @@ app.post('/users/register', function(req, res) {
  *         schema:
  *           type: object
  *           properties:
- *             success:
- *               type: boolean
- *               example: false
  *             message:
  *               type: string
  *               example: Login is null or undefined
@@ -245,24 +238,75 @@ app.post('/users/login', function(req, res) {
 
       if (error) {
 
-        return res.status(500).json({ success: false, message: error });
+        return res.status(500).json({ message: error });
 
 			} else if (!user) {
 
-        return res.status(409).json({ success: false, message: 'User not found' });
+        return res.status(409).json({ message: 'User not found' });
 
   		} else {
 
   			if (user.password != req.body.password) {
 
-  				res.status(409).json({ success: false, message: 'Wrong password' });
+  				res.status(409).json({ message: 'Wrong password' });
 
         } else {
 
   				var token = JWT.sign(user, app.get('superSecret'), { expiresIn: 43200 });
 
   				res.status(200).json({
-  					success: true,
+  					message: 'User logged in successfully',
+            user: {
+              id: user.id,
+              login: user.login
+            },
+  					token: token
+  				});
+  			}
+  		}
+  	});
+  }
+});
+
+// ##################################
+// ############## TEST ##############
+// ##################################
+
+app.post('/users/login/test', function(req, res) {
+
+  logger.info(JSON.stringify(req.body));
+
+  if (req.body.login == undefined || req.body.login == null) {
+
+    return res.status(422).json({ success: false, message: 'Login is null or undefined' });
+
+  } else if (req.body.password == undefined || req.body.password == null) {
+
+		return res.status(422).json({ success: false, message: 'Password is null or undefined' });
+
+	} else {
+
+    Database.findOne({ login: req.body.login }, (error, user) => {
+
+      if (error) {
+
+        return res.status(500).json({ message: error });
+
+			} else if (!user) {
+
+        return res.status(409).json({ message: 'User not found' });
+
+  		} else {
+
+  			if (user.password != req.body.password) {
+
+  				res.status(409).json({ message: 'Wrong password' });
+
+        } else {
+
+  				var token = JWT.sign(user, app.get('superSecret'), { expiresIn: 43200 });
+
+  				res.status(200).json({
   					message: 'User logged in successfully',
   					token: token
   				});
@@ -342,6 +386,11 @@ app.use((req, res, next) => {
  *     produces:
  *       - application/json
  *     parameters:
+ *       - in: header
+ *         name: token
+ *         type: string
+ *         required: true
+ *         description: "Authorization token"
  *       - in: query
  *         name: limit
  *         type: number
@@ -430,18 +479,21 @@ app.get('/users', (req, res) => {
  *     produces:
  *       - application/json
  *     parameters:
+ *       - in: header
+ *         name: token
+ *         type: string
+ *         required: true
+ *         description: "Authorization token"
  *       - in: path
  *         name: userId
  *         type: string
  *         required: true
+ *         description: "ID of user"
  *     responses:
  *       200:
  *         schema:
  *           type: object
  *           properties:
- *             success:
- *               type: boolean
- *               example: true
  *             message:
  *               type: string
  *               example: User has been removed correctly
@@ -458,9 +510,6 @@ app.get('/users', (req, res) => {
  *         schema:
  *           type: object
  *           properties:
- *             success:
- *               type: boolean
- *               example: false
  *             message:
  *               type: string
  *               example: userId is null or undefined
@@ -504,127 +553,121 @@ app.delete('/users/:userId', (req, res) => {
  *     produces:
  *       - application/json
  *     parameters:
+ *       - in: header
+ *         name: token
+ *         type: string
+ *         required: true
+ *         description: "Authorization token"
+ *       - in: path
+ *         name: userId
+ *         type: string
+ *         required: true
  *       - in: body
  *         name: body
- *         description: |
- *           Token and one or more property for user that needs to be updated
- *           in the database. Each update requires a re-login.
+ *         description: Properties of user that need to be updated in the database
  *         required: true
  *         schema:
  *           type: object
  *           properties:
- *             token:
- *               type: string
- *               required: true
  *             newLogin:
  *               type: string
- *               example: Bunny
- *               required: false
  *             newPassword:
  *               type: string
- *               example: iLikeBunnies
- *               required: false
  *             newEmail:
  *               type: string
- *               example: bunny@gmail.com
- *               required: false
  *     responses:
  *       200:
  *         description: User updated successfully
  *         schema:
  *           type: object
  *           properties:
- *             success:
- *               type: boolean
- *               example: true
  *             message:
  *               type: string
  *               example: User updated successfully
+ *       409:
+ *         description: The token is expired
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: The token is expired
  *       422:
  *         description: None of the properties (newLogin, newPassword, newEmail) have been sent
  *         schema:
  *           type: object
  *           properties:
- *             success:
- *               type: boolean
- *               example: false
  *             message:
  *               type: string
  *               example: Nothing to update
  *       500:
  *         description: Internal Server Error
  */
-app.put('/users', (req, res) => {
+app.put('/users/:userId', (req, res) => {
 
   logger.info(JSON.stringify(req.body));
 
-  var userId = req.params.userId, newLogin = req.body.newLogin,
-      newPassword = req.body.newPassword, newEmail = req.body.newEmail,
+  var userId = req.params.userId,
+      newLogin = req.body.newLogin,
+      newPassword = req.body.newPassword,
+      newEmail = req.body.newEmail,
       update = {};
 
-  var query = { login: login };
+  if (!newLogin && !newPassword && !newEmail) {
 
-  // var promise = new Promise(function(resolve, reject) {
-  //   // do a thing, possibly async, then…
-  //
-  //   if (/* everything turned out fine */) {
-  //     resolve("Stuff worked!");
-  //   }
-  //   else {
-  //     reject(Error("It broke"));
-  //   }
-  // });
+    return res.status(422).json({ success: false, message: 'Nothing to update' });
 
-  async.waterfall([
-    (callback) => {
+  } else {
 
-      if (!newLogin && !newPassword && !newEmail) {
+    if (newPassword) { update.password = newPassword };
 
-        return res.status(422).json({ success: false, message: 'Nothing to update' });
+    if (newEmail) { update.email = newEmail };
 
-      } else if (newLogin) {
+    if (newLogin) {
 
-        User.findOne({ login: newLogin }, (error, user) => {
+      User.findOne({ login: newLogin }, (error, user) => {
 
-          if (error) {
-
-            return res.status(500).json({ success: false, message: error });
-
-          } else if (user) {
-
-            return res.status(409).json({ success: false, message: 'Login is already in use' });
-
-          } else {
-
-            update.login = newLogin;
-            callback(null);
-
-          }
-        });
-      } else {
-
-        callback(null);
-
-      };
-    },
-    (callback) => {
-
-      if (newPassword) { update.password = newPassword };
-
-      if (newEmail) { update.email = newEmail };
-
-      User.findOneAndUpdate(query, update, (error, user) => {
         if (error) {
 
-          return res.status(500).json({ success: false, message: error });
+          return res.status(500).json({ message: error });
+
+        } else if (user) {
+
+          return res.status(409).json({ message: 'Login is already in use' });
 
         } else {
 
-          return res.status(200).json({ success: true, message: 'User updated successfully'});
+          update.login = newLogin;
+
+          User.findOneAndUpdate({ id: userId }, update, (error, user) => {
+
+            if (error) {
+
+              return res.status(500).json({ message: error });
+
+            } else {
+
+              return res.status(200).json({ message: 'User updated successfully'});
+
+            }
+          });
+        }
+      });
+
+    } else {
+
+      User.findOneAndUpdate({ id: userId}, update, (error, user) => {
+        if (error) {
+
+          return res.status(500).json({ message: error });
+
+        } else {
+
+          return res.status(200).json({ message: 'User updated successfully'});
 
         }
       });
     }
-  ]);
+  }
 });
 };

@@ -15,6 +15,7 @@ var User        = require('./app/models/user');
 var History     = require('./app/models/history');
 var users       = require('./app/routes/users');
 var histories   = require('./app/routes/histories');
+var websites   = require('./app/routes/websites');
 
 var swaggerDefinition = {
   info: {
@@ -28,7 +29,7 @@ var swaggerDefinition = {
 // options for the swagger docs
 var options = {
   swaggerDefinition: swaggerDefinition,
-  apis: ['./app/routes/users.js', './app/routes/histories.js'],
+  apis: ['./app/routes/users.js', './app/routes/histories.js', './app/routes/websites.js'],
 };
 
 // options for the winston logger
@@ -85,6 +86,7 @@ app.get('/api-docs.json', function(req, res) {
 
 users.setup(app, logger);
 histories.setup(app, logger);
+websites.setup(app, logger);
 
 var port = process.env.PORT || 8888;
 app.listen(port);

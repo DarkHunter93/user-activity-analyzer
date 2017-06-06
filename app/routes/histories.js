@@ -548,4 +548,103 @@ app.post('/histories/remove', (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /histories/getTopWebsites:
+ *   get:
+ *     description: Get most visited websites
+ *     tags: [Histories]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         type: string
+ *         required: true
+ *         description: "Authorization token"
+ *       - in: query
+ *         name: limit
+ *         type: number
+ *         required: false
+ *         description: "Limit of search results. Default equal 10."
+ *       - in: query
+ *         name: offset
+ *         type: number
+ *         required: false
+ *         description: "Offset of search results. Default equal 0."
+ *       - in: query
+ *         name: aggregateBy
+ *         type: string
+ *         required: false
+ *         description: "Default by 'url.full'."
+ *     responses:
+ *       200:
+ *         description: Ok
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: History item deleted successfully
+ *       409:
+ *         description: The token is expired
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: The token is expired
+ *       500:
+ *         description: Internal Server Error
+ */
+app.get('/histories/getTopWebsites', (req, res) => {
+
+  logger.info(JSON.stringify(req.body));
+
+  var offset = parseInt(req.query.offset) || 0,
+      limit = parseInt(req.query.limit) || 10,
+      aggregateBy = req.query.aggregateBy || 'url.full';
+
+  /*
+  The _id field is mandatory; however, you can specify an _id value
+  of null to calculate accumulated values for all the input documents as a whole.
+ */
+
+  History.aggregate([
+    { $group : {
+      _id: { url: `$${aggregateBy}` },
+      count: { $sum: 1 }
+    }},
+    { $sort : { count : -1 }},
+    { $skip: offset },
+    { $limit: limit }],
+    (error, data) => {
+
+      if (error) {
+
+        return res.status(500).json({ message: error});
+
+      } else {
+
+        var response = [];
+
+        data.forEach((item, index) => {
+
+          var newItem = {};
+
+          newItem[aggregateBy] = item._id.url;
+          newItem.count = item.count;
+
+          response.push(newItem);
+
+        });
+
+        return res.status(200).json({ success: true, data: response });
+      }
+    }
+  );
+});
+
 }
