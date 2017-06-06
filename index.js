@@ -68,6 +68,7 @@ mongoose.connect(config.database);
 app.set('superSecret', config.secret);
 
 // parse requests bodies to JSON format
+app.use(bodyParser({limit: '5mb'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
