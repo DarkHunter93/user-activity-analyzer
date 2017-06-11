@@ -1,6 +1,8 @@
-function login(req, res) {
+var JWT       = require('jsonwebtoken');
+var User      = require('../models/user');
+var config    = require('../../config');
 
-  var JWT = require('jsonwebtoken');
+function login(req, res) {
 
   if (!req.body.login || !req.body.password) {
 
@@ -24,9 +26,9 @@ function login(req, res) {
 
       } else {
 
-        var token = JWT.sign(user, app.get('superSecret'), { expiresIn: 43200 });
+        var token = JWT.sign(user, config.secret, { expiresIn: 43200 });
 
-        res.status(200).json({
+        return res.status(200).json({
           user: {
             id: user.id,
             login: user.login

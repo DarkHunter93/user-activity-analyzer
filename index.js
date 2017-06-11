@@ -2,21 +2,15 @@ var express     = require('express');
 var bodyParser  = require('body-parser');
 var morgan      = require('morgan');
 var mongoose    = require('mongoose');
-var JWT         = require('jsonwebtoken');
 var winston     = require('winston');
-var async       = require('async');
 var path        = require('path');
 var url         = require('url');
 var UUID        = require('uuid/v4');
 var swagger     = require('swagger-jsdoc');
 var cors        = require('cors');
 var config      = require('./config');
-// var User        = require('./app/models/user');
-// var History     = require('./app/models/history');
 var users       = require('./app/routes/users');
-// var histories   = require('./app/routes/histories');
-// var websites    = require('./app/routes/websites');
-// var login       = require('./app/routes/login');
+var login       = require('./app/routes/login');
 
 var swaggerDefinition = {
   info: {
@@ -30,10 +24,7 @@ var swaggerDefinition = {
 // options for the swagger docs
 var options = {
   swaggerDefinition: swaggerDefinition,
-  apis: ['./app/routes/users.js',
-         './app/routes/histories.js',
-         './app/routes/websites.js',
-         './app/routes/login.js'],
+  apis: ['./app/routes/users.js'],
 };
 
 // options for the winston logger
@@ -59,7 +50,7 @@ logger.stream = {
     }
 };
 
-var swaggerSpec = swagger(options);
+// var swaggerSpec = swagger(options);
 var app         = express();
 
 app.use(morgan('short', { "stream": logger.stream }));
@@ -88,15 +79,13 @@ app.get('/api-docs.json', function(req, res) {
   res.send(swaggerSpec);
 });
 
-users.setup(app, logger);
-// histories.setup(app, logger);
-// login.setup(app, logger);
-// websites.setup(app, logger);
+login.setup(app);
+users.setup(app);
 
-// app.get('*', wrong);
-// app.delete('*', wrong);
-// app.patch('*', wrong);
-// app.post('*', wrong);
+app.get('*', wrong);
+app.delete('*', wrong);
+app.patch('*', wrong);
+app.post('*', wrong);
 
 var port = process.env.PORT || 8888;
 app.listen(port);

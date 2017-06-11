@@ -1,5 +1,3 @@
-'use strict';
-
 var JWT         = require('jsonwebtoken');
 var UUID        = require('uuid/v4');
 var config      = require('../../config');
