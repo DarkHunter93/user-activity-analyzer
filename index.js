@@ -25,7 +25,9 @@ var swaggerDefinition = {
 // options for the swagger docs
 var options = {
   swaggerDefinition: swaggerDefinition,
-  apis: ['./app/routes/users.js'],
+  apis: ['./app/routes/users.js',
+         './app/routes/histories.js',
+         './app/routes/login.js'],
 };
 
 // options for the winston logger
