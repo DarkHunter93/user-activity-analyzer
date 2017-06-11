@@ -6,9 +6,15 @@ module.exports = mongoose.model('History', new Schema({
     type: String,
     required: true
   },
-  websiteId: {
-    type: String,
-    required: true
+  websiteContent: {
+    text: {
+      type: String,
+      required: true
+    },
+    urls: {
+      type: Array,
+      required: false
+    }
   },
   url: {
     domain: {

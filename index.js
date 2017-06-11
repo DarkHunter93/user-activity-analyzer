@@ -11,11 +11,12 @@ var UUID        = require('uuid/v4');
 var swagger     = require('swagger-jsdoc');
 var cors        = require('cors');
 var config      = require('./config');
-var User        = require('./app/models/user');
-var History     = require('./app/models/history');
+// var User        = require('./app/models/user');
+// var History     = require('./app/models/history');
 var users       = require('./app/routes/users');
-var histories   = require('./app/routes/histories');
-var websites   = require('./app/routes/websites');
+// var histories   = require('./app/routes/histories');
+// var websites    = require('./app/routes/websites');
+// var login       = require('./app/routes/login');
 
 var swaggerDefinition = {
   info: {
@@ -29,7 +30,10 @@ var swaggerDefinition = {
 // options for the swagger docs
 var options = {
   swaggerDefinition: swaggerDefinition,
-  apis: ['./app/routes/users.js', './app/routes/histories.js', './app/routes/websites.js'],
+  apis: ['./app/routes/users.js',
+         './app/routes/histories.js',
+         './app/routes/websites.js',
+         './app/routes/login.js'],
 };
 
 // options for the winston logger
@@ -85,9 +89,19 @@ app.get('/api-docs.json', function(req, res) {
 });
 
 users.setup(app, logger);
-histories.setup(app, logger);
-websites.setup(app, logger);
+// histories.setup(app, logger);
+// login.setup(app, logger);
+// websites.setup(app, logger);
+
+// app.get('*', wrong);
+// app.delete('*', wrong);
+// app.patch('*', wrong);
+// app.post('*', wrong);
 
 var port = process.env.PORT || 8888;
 app.listen(port);
 console.log('Server running at http://localhost:' + port);
+
+function wrong(req, res) {
+  res.status(404).json({ message: 'The requested resource does not exist on the server' });
+}

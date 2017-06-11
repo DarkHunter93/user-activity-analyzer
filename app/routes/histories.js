@@ -5,6 +5,8 @@ var config      = require('../../config');
 var History     = require('../models/history');
 var Website     = require('../models/website');
 
+var Histories   = require('../logic/histories');
+
 module.exports.setup = (app, logger) => {
 
 /**
@@ -18,25 +20,27 @@ module.exports.setup = (app, logger) => {
  *     produces:
  *       - application/json
  *     parameters:
+ *       - in: header
+ *         name: token
+ *         type: string
+ *         required: true
+ *         description: "Authorization token"
+ *       - in: query
+ *         name: limit
+ *         type: number
+ *         required: false
+ *         description: "Limit of users"
+ *       - in: query
+ *         name: offset
+ *         type: number
+ *         required: false
+ *         description: "Offset of users"
  *       - in: body
  *         name: body
  *         required: true
  *         schema:
  *           type: object
  *           properties:
- *             token:
- *               type: string
- *               required: true
- *             offset:
- *               type: number
- *               example: 10
- *               default: 0
- *               required: false
- *             limit:
- *               type: number
- *               example: 200
- *               default: 100
- *               required: false
  *             searchingProperties:
  *               type: object
  *               properties:
@@ -101,59 +105,24 @@ module.exports.setup = (app, logger) => {
  *               description: Select only the properties you want to search
  *     responses:
  *       200:
+ *         description: Ok
  *         schema:
  *           type: object
  *           properties:
- *             success:
- *               type: boolean
- *               example: true
- *             data: array
+ *             data:
+ *               type: array
+ *               description: Array of history items
  *       422:
+ *         description: "`searchingProperties` is null or undefined"
  *         schema:
  *           type: object
  *           properties:
- *             success:
- *               type: boolean
- *               example: false
  *             message:
  *               type: string
- *               example: "`searchingProperties` is null or undefined"
  *       500:
  *         description: Internal Server Error
  */
-app.post('/histories/search', (req, res) => {
-
-  logger.info(JSON.stringify(req.body));
-
-  var offset = parseInt(req.body.offset) || 0, limit = parseInt(req.body.limit) || 100;
-
-  var searchingProperties = req.body.searchingProperties;
-
-  if (searchingProperties) {
-
-    History.
-      find(searchingProperties, '-_id -__v').
-      limit(limit).
-      skip(offset).
-      exec((error, data) => {
-
-        if (error) {
-
-          return res.status(500).json({ success: false, message: error });
-
-        } else {
-
-          return res.status(200).json({ success: true, data: data });
-
-        }
-      });
-
-    } else {
-
-      return res.status(422).json({ success: false, message: `'searchingProperties' is null or undefined.` });
-
-    }
-});
+app.post('/histories/search', Histories.search);
 
 /**
  * @swagger
@@ -166,6 +135,11 @@ app.post('/histories/search', (req, res) => {
  *     produces:
  *       - application/json
  *     parameters:
+ *       - in: header
+ *         name: token
+ *         type: string
+ *         required: true
+ *         description: "Authorization token"
  *       - in: body
  *         name: body
  *         description: History object that needs to be added to the database
@@ -173,9 +147,6 @@ app.post('/histories/search', (req, res) => {
  *         schema:
  *           type: object
  *           properties:
- *             token:
- *               type: string
- *               required: true
  *             url:
  *               type: object
  *               properties:
@@ -292,56 +263,7 @@ app.post('/histories/search', (req, res) => {
  *       500:
  *         description: Internal Server Error
  */
-app.post('/histories/save', (req, res) => {
-
-  logger.info(JSON.stringify(req.body));
-
-  var websiteId = UUID();
-
-  console.log(websiteId);
-  console.log(req.body.websiteContent);
-
-  Website.create({
-    id: websiteId,
-    websiteContent: req.body.websiteContent
-  }, (error) => {
-
-    if (error && error.errors) {
-
-			return res.status(422).json({ success: false, message: error.errors});
-
- 		} else if (error) {
-
-      return res.status(500).json({ success: false, message: error});
-
-    } else {
-
-      History.create({
-     		ownerId: req.decoded._doc.id,
-        websiteId: websiteId,
-     		url: req.body.url,
-     		parentUrl: req.body.parentUrl,
-        connection: req.body.connection,
-     		date: req.body.date
-     	}, (error) => {
-
-     		if (error && error.errors) {
-
-    			return res.status(422).json({ success: false, message: error.errors});
-
-     		} else if (error) {
-
-          return res.status(500).json({ success: false, message: error});
-
-        } else {
-
-     			return res.status(201).json({ success: true, message: 'History record saved succesfully' });
-
-     		}
-      });
- 		}
-  });
-});
+app.post('/histories/save', Histories.save);
 
 /**
  * @swagger
@@ -510,43 +432,7 @@ app.post('/histories/getPreviousWebsites', (req, res) => {
  *       500:
  *         description: Internal Server Error
  */
-app.post('/histories/remove', (req, res) => {
-
-  logger.info(JSON.stringify(req.body));
-
-  if (req.decoded._doc.admin == true) {
-
-    if (req.body.id) {
-
-      History.remove({ id: id }, (error) => {
-
-        if (error) {
-
-          return res.status(500).json({ success: false, message: error});
-
-        } else {
-
-          return res.status(200).json({ success: true, message: 'History item deleted successfully' });
-
-        }
-      });
-
-    } else {
-
-      return res.status(422).json({ success: false, message: `'id' is null or undefined` });
-
-    }
-
-  } else {
-
-    /*
-    403: The server understood the request but refuses to authorize it
-    */
-
-    return res.status(403).json({ success: true, message: `You don't have permission to perform this operation` });
-
-  }
-});
+app.delete('/histories', Histories.remove);
 
 /**
  * @swagger
