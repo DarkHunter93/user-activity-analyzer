@@ -11,14 +11,15 @@ var cors        = require('cors');
 var config      = require('./config');
 var users       = require('./app/routes/users');
 var login       = require('./app/routes/login');
+var histories   = require('./app/routes/histories');
 
 var swaggerDefinition = {
   info: {
     title: 'User Activity Analyzer',
     version: '0.4.0'
   },
-  host: 'user-activity-analyzer.herokuapp.com', // optional
-  basePath: '/',          // optional
+  host: 'user-activity-analyzer.herokuapp.com',
+  basePath: '/',
 };
 
 // options for the swagger docs
@@ -50,7 +51,7 @@ logger.stream = {
     }
 };
 
-// var swaggerSpec = swagger(options);
+var swaggerSpec = swagger(options);
 var app         = express();
 
 app.use(morgan('short', { "stream": logger.stream }));
@@ -81,6 +82,7 @@ app.get('/api-docs.json', function(req, res) {
 
 login.setup(app);
 users.setup(app);
+histories.setup(app);
 
 app.get('*', wrong);
 app.delete('*', wrong);
