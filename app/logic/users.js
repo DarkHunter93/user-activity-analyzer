@@ -182,9 +182,10 @@ function saveHistoryItem(req, res) {
       url = req.body.url,
       parentUrl = req.body.parentUrl,
       connection = req.body.connection,
-      date = req.body.date;
+      date = req.body.date,
+      timeSpent = req.body.timeSpent;
 
-  Database.saveHistory({ ownerId, websiteContent, url, parentUrl, connection, date }, (error) => {
+  Database.saveHistory({ ownerId, websiteContent, url, parentUrl, connection, date, timeSpent }, (error) => {
 
     if (error && error.errors) {
 

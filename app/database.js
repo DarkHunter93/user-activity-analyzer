@@ -10,7 +10,8 @@ function saveHistory(properties, callback) {
  		url: properties.url,
  		parentUrl: properties.parentUrl,
     connection: properties.connection,
- 		date: properties.date
+ 		date: properties.date,
+    timeSpent: properties.timeSpent
  	}, (error) => { callback(error) });
 
 };

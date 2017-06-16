@@ -85,5 +85,9 @@ module.exports = mongoose.model('History', new Schema({
 	date: {
     type: Date,
     default: new Date
+  },
+  timeSpent: {
+    type: Number,
+    required: false
   }
 }));
