@@ -25,6 +25,16 @@ function getHistoryOfUser(properties, callback) {
 
 };
 
+function getHistoryOfUsers(properties, callback) {
+
+  History.
+    find(properties.searchingProperties, '-_id -__v').
+    limit(properties.limit).
+    skip(properties.offset).
+    exec((error, data) => { callback(error, data) });
+
+};
+
 function removeHistory(properties, callback) {
 
   History.remove({ id: properties.historyId }, (error) => { callback(error) });
@@ -34,5 +44,6 @@ function removeHistory(properties, callback) {
 module.exports = {
     saveHistory: saveHistory,
     getHistoryOfUser: getHistoryOfUser,
+    getHistoryOfUsers: getHistoryOfUsers,
     removeHistory: removeHistory
 };

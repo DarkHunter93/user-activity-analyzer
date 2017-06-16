@@ -1,5 +1,6 @@
-var UUID      = require('uuid/v4');
-var History   = require('../models/history');
+var UUID        = require('uuid/v4');
+var History     = require('../models/history');
+var Database    = require('../database');
 
 // ########################
 // ######### SAVE #########
@@ -40,8 +41,6 @@ function save(req, res) {
 
 function search(req, res) {
 
-  var offset = parseInt(req.body.offset) || 0, limit = parseInt(req.body.limit) || 100;
-
   /*
   ########################################################
   Po wprowadzeniu OAuth2 można dawać użytkownikom różne
@@ -51,38 +50,22 @@ function search(req, res) {
   ########################################################
   */
 
-  var searchingProperties = req.body.searchingProperties || {};
+  var offset = parseInt(req.query.offset) || 0,
+      limit = parseInt(req.query.limit) || 100,
+      searchingProperties = req.body.searchingProperties || {};
 
-  if (searchingProperties) {
+  Database.getHistoryOfUsers({ offset, limit, searchingProperties }, (error, data) => {
 
-    History.
-      find(searchingProperties, '-_id -__v').
-      limit(limit).
-      skip(offset).
-      exec((error, data) => {
+    if (error) {
 
-        if (error) {
+      return res.status(500).json({ message: error });
 
-          return res.status(500).json({ message: error });
+    } else {
 
-        } else {
+      return res.status(200).json({ count: data.length, data: data });
 
-          /*
-          ########################################################
-          Wprowadzić mapowanie, ujednolicić nazwy dla użytkownika!
-          ########################################################
-          */
-
-          return res.status(200).json({ data: data });
-
-        }
-      });
-
-  } else {
-
-    return res.status(422).json({ message: `'searchingProperties' is null or undefined.` });
-
-  }
+    }
+  });
 
 };
 
