@@ -2,6 +2,7 @@ var JWT         = require('jsonwebtoken');
 var UUID        = require('uuid/v4');
 var config      = require('../../config');
 var User        = require('../models/user');
+var Database    = require('../database');
 
 function register(req, res) {
 
@@ -174,11 +175,79 @@ function update(req, res) {
   }
 };
 
+function saveHistoryItem(req, res) {
+
+  var ownerId = req.params.userId,
+      websiteContent = req.body.websiteContent,
+      url = req.body.url,
+      parentUrl = req.body.parentUrl,
+      connection = req.body.connection,
+      date = req.body.date;
+
+  Database.saveHistory({ ownerId, websiteContent, url, parentUrl, connection, date }, (error) => {
+
+    if (error && error.errors) {
+
+			return res.status(422).json({ message: error.errors });
+
+ 		} else if (error) {
+
+      return res.status(500).json({ message: error });
+
+    } else {
+
+ 			return res.status(201).json({ message: 'History record saved succesfully' });
+
+ 		}
+  });
+};
+
+function getHistory(req, res) {
+
+  var userId = req.params.userId,
+      offset = parseInt(req.query.offset) || 0,
+      limit = parseInt(req.query.limit) || 100;
+
+  Database.getHistoryOfUser({ offset, limit, userId }, (error, data) => {
+
+    if (error) {
+
+      return res.status(500).json({ message: error });
+
+    } else {
+
+      return res.status(200).json({ count: data.length, data: data });
+
+    }
+  });
+};
+
+function removeHistoryItem(req, res) {
+
+  var historyId = req.params.historyId;
+
+  Database.removeHistory({ historyId }, (error) => {
+
+    if (error) {
+
+      return res.status(500).json({ message: error});
+
+    } else {
+
+      return res.status(200).json({ message: 'History item deleted successfully' });
+
+    }
+  });
+};
+
 module.exports = {
     register: register,
     get: get,
     remove: remove,
-    update: update
+    update: update,
+    saveHistoryItem: saveHistoryItem,
+    getHistory: getHistory,
+    removeHistoryItem: removeHistoryItem
 };
 
 function findOneAndUpdate(query, update, res) {

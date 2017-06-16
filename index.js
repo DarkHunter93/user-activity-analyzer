@@ -16,7 +16,7 @@ var histories   = require('./app/routes/histories');
 var swaggerDefinition = {
   info: {
     title: 'User Activity Analyzer',
-    version: '0.4.0'
+    version: '0.5.0'
   },
   host: 'user-activity-analyzer.herokuapp.com',
   basePath: '/',
@@ -75,9 +75,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
 app.get('/api-docs.json', function(req, res) {
-
-  logger.info(JSON.stringify(req.body));
-
   res.setHeader('Content-Type', 'application/json');
   res.send(swaggerSpec);
 });

@@ -1,5 +1,3 @@
-'use strict';
-
 var Users       = require('../logic/users');
 var Auth        = require('../logic/authentication');
 
@@ -238,5 +236,230 @@ app.delete('/users/:userId', Users.remove);
  *         description: Internal Server Error
  */
 app.patch('/users/:userId', Users.update);
+
+/**
+ * @swagger
+ * /users/{userId}/histories:
+ *   post:
+ *     description: Save history of user's activity
+ *     tags: [Users]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         type: string
+ *         required: true
+ *         description: "Authorization token"
+ *       - in: path
+ *         name: userId
+ *         type: string
+ *         required: true
+ *       - in: body
+ *         name: body
+ *         description: History object that needs to be added to the database
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             url:
+ *               type: object
+ *               properties:
+ *                 domain:
+ *                   type: string
+ *                   example: www.example.com
+ *                   required: true
+ *                 full:
+ *                   type: string
+ *                   example: www.example.com/books?id=666666
+ *                   required: true
+ *                 path:
+ *                   type: string
+ *                   example: /books
+ *                   required: false
+ *                 query:
+ *                   type: object
+ *                   example: {
+ *                     id: 666666
+ *                   }
+ *                   required: false
+ *                 protocol:
+ *                   type: string
+ *                   example: HTTPS
+ *                   required: false
+ *                 port:
+ *                   type: number
+ *                   example: 6000
+ *                   required: false
+ *             parentUrl:
+ *               type: object
+ *               properties:
+ *                 domain:
+ *                   type: string
+ *                   example: www.google.com
+ *                   required: false
+ *                 full:
+ *                   type: string
+ *                   example: www.google.com/
+ *                   required: false
+ *                 path:
+ *                   type: string
+ *                   example: /
+ *                   required: false
+ *                 query:
+ *                   type: object
+ *                   required: false
+ *                 protocol:
+ *                   type: string
+ *                   example: HTTPS
+ *                   required: false
+ *                 port:
+ *                   type: number
+ *                   example: 5876
+ *                   required: false
+ *               required: true
+ *             connection:
+ *               type: object
+ *               properties:
+ *                 url:
+ *                   type: string
+ *                   required: false
+ *                 title:
+ *                   type: string
+ *                   required: false
+ *             websiteContent:
+ *               type: object
+ *               properties:
+ *                 text:
+ *                   type: string
+ *                   example: "Lorem ipsum dolor sit amet enim. Etiam ullamcorper."
+ *                   required: true
+ *                 urls:
+ *                   type: array
+ *                   required: false
+ *             date:
+ *               type: date
+ *               example: Fri May 26 2017 18:27:15 GMT+0200 (CEST)
+ *               required: false
+ *     responses:
+ *       201:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             success:
+ *               type: boolean
+ *               example: true
+ *             message:
+ *               type: string
+ *               example: History record saved succesfully
+ *       422:
+ *         description: required property is null or undefined
+ *         schema:
+ *           type: object
+ *           properties:
+ *             success:
+ *               type: boolean
+ *               example: false
+ *             message:
+ *               type: object
+ *               example: {
+ *                 parentUrl: {
+ *                   message: Path `parentUrl` is required.,
+ *                   name: ValidatorError,
+ *                   properties: {
+ *                     type: required,
+ *                     message: "Path `{PATH}` is required.",
+ *                     path: parentUrl
+ *                   },
+ *                 kind: required,
+ *                 path: parentUrl
+ *                 }
+ *               }
+ *       500:
+ *         description: Internal Server Error
+ */
+app.post('/users/:userId/histories', Users.saveHistoryItem);
+
+/**
+ * @swagger
+ * /users/{userId}/histories:
+ *   get:
+ *     description: Get user's history
+ *     tags: [Users]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         type: string
+ *         required: true
+ *         description: "Authorization token"
+ *       - in: query
+ *         name: limit
+ *         type: number
+ *         required: false
+ *         description: "Limit of users"
+ *       - in: query
+ *         name: offset
+ *         type: number
+ *         required: false
+ *         description: "Offset of users"
+ *     responses:
+ *       200:
+ *         description: Ok
+ *         schema:
+ *           type: object
+ *           properties:
+ *             count:
+ *               type: number
+ *               description: "Number of items in 'data' array"
+ *             data:
+ *               type: array
+ *               description: Array of history items
+ *       500:
+ *         description: Internal Server Error
+ */
+app.get('/users/:userId/histories', Users.getHistory);
+
+/**
+ * @swagger
+ * /users/{userId}/histories/{historyId}:
+ *   delete:
+ *     description: Remove history record in database
+ *     tags: [Users]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         type: string
+ *         required: true
+ *         description: "Authorization token"
+ *       - in: path
+ *         name: userId
+ *         type: string
+ *         required: true
+ *       - in: path
+ *         name: historyId
+ *         type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: History item deleted successfully
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *       500:
+ *         description: Internal Server Error
+ */
+app.delete('/users/:userId/histories/:historyId', Users.removeHistoryItem);
 
 }
