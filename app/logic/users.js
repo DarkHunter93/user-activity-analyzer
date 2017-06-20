@@ -86,7 +86,30 @@ function get(req, res) {
 
   var offset = parseInt(req.query.offset) || 0, limit = parseInt(req.query.limit) || 100;
 
-  User.find({}, '-_id -__v -password -admin')
+  User.find({}, '-_id -__v -password -admin -birthdate -gender -province')
+      .limit(limit)
+      .skip(offset)
+      .exec((error, data) => {
+
+        if (error) {
+
+          return res.status(500).json({ message: error });
+
+        } else {
+
+          return res.status(200).json({ count: data.length, users: data });
+
+        }
+      });
+};
+
+function getUser(req, res) {
+
+  var userId = req.params.userId,
+      offset = parseInt(req.query.offset) || 0,
+      limit = parseInt(req.query.limit) || 100;
+
+  User.find({ id: userId }, '-_id -__v -password -admin')
       .limit(limit)
       .skip(offset)
       .exec((error, data) => {
@@ -244,6 +267,7 @@ function removeHistoryItem(req, res) {
 module.exports = {
     register: register,
     get: get,
+    getUser: getUser,
     remove: remove,
     update: update,
     saveHistoryItem: saveHistoryItem,

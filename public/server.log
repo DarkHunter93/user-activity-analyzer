@@ -123,3 +123,6 @@
 {"level":"info","message":"::ffff:127.0.0.1 - GET /histories/getTopWebsites/3f27d105-8949-41ab-9f97-ea0e4e8cd3e7 HTTP/1.1 200 101 - 116.658 ms\n","timestamp":"2017-06-20T13:42:41.544Z"}
 {"level":"info","message":"::ffff:127.0.0.1 - GET /histories/getTopWebsites/1a56eb79-9fa8-4eb0-a213-ee8669e7431c?limit=5 HTTP/1.1 200 420 - 193.446 ms\n","timestamp":"2017-06-20T13:43:45.118Z"}
 {"level":"info","message":"::ffff:127.0.0.1 - GET /histories/getTopWebsites HTTP/1.1 200 798 - 142.634 ms\n","timestamp":"2017-06-20T13:43:53.280Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /users/ HTTP/1.1 200 1796 - 173.675 ms\n","timestamp":"2017-06-20T13:57:58.434Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /users/ HTTP/1.1 200 1472 - 156.609 ms\n","timestamp":"2017-06-20T14:00:53.235Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /users/8f323b7a-7380-4c7f-a184-320dd2456695 HTTP/1.1 200 198 - 138.182 ms\n","timestamp":"2017-06-20T14:01:02.681Z"}

@@ -137,6 +137,62 @@ app.get('/users', Users.get);
 /**
  * @swagger
  * /users/{userId}:
+ *   get:
+ *     description: Get array of users objects
+ *     tags: [Users]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         type: string
+ *         required: true
+ *         description: "Authorization token"
+ *       - in: query
+ *         name: limit
+ *         type: number
+ *         required: false
+ *         description: "Limit of users"
+ *       - in: query
+ *         name: offset
+ *         type: number
+ *         required: false
+ *         description: "Offset of users"
+ *     responses:
+ *       200:
+ *         description: Ok
+ *         schema:
+ *           type: object
+ *           properties:
+ *             count:
+ *               type: number
+ *               description: Number of returned users
+ *               example: 2
+ *             users:
+ *               type: array
+ *               description: Array of users objects
+ *               example: [
+ *                 {
+ *                   "id": "73988969-49f6-48a8-9ec0-02d552ca24d8",
+ *                   "login": "Madonna",
+ *                   "email": "queen@madonna.com"
+ *                 },
+ *                 {
+ *                   "id": "f31a47cc-6184-468f-9109-cb929bd39bea",
+ *                   "login": "Client",
+ *                   "email": "Client@gmail.com"
+ *                 }
+ *               ]
+ *       500:
+ *         description: Internal Server Error
+ */
+app.get('/users/:userId', Users.getUser);
+
+/**
+ * @swagger
+ * /users/{userId}:
  *   delete:
  *     description: Remove user from the application
  *     tags: [Users]
