@@ -40,11 +40,54 @@ function removeHistory(properties, callback) {
 
   History.remove({ id: properties.historyId }, (error) => { callback(error) });
 
-}
+};
+
+function getTopWebsites(properties, callback) {
+
+  /*
+  The _id field is mandatory; however, you can specify an _id value
+  of null to calculate accumulated values for all the input documents as a whole.
+  */
+
+  History.aggregate([
+    { $group : {
+      _id: { url: `$${properties.aggregateBy}` },
+      count: { $sum: 1 }
+    }},
+    { $sort : { count : -1 }},
+    { $skip: properties.offset },
+    { $limit: properties.limit }],
+    callback
+  );
+
+};
+
+function getTopWebsitesOfUser(properties, callback) {
+
+  /*
+  The _id field is mandatory; however, you can specify an _id value
+  of null to calculate accumulated values for all the input documents as a whole.
+  */
+
+  History.aggregate([
+    { $match: { ownerId: `${properties.userId}` } },
+    { $group : {
+      _id: { url: `$${properties.aggregateBy}` },
+      count: { $sum: 1 }
+    }},
+    { $sort : { count : -1 }},
+    { $skip: properties.offset },
+    { $limit: properties.limit }],
+    callback
+  );
+
+};
 
 module.exports = {
     saveHistory: saveHistory,
     getHistoryOfUser: getHistoryOfUser,
     getHistoryOfUsers: getHistoryOfUsers,
-    removeHistory: removeHistory
+    removeHistory: removeHistory,
+    getTopWebsites: getTopWebsites,
+    getTopWebsitesOfUser: getTopWebsitesOfUser
 };

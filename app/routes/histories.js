@@ -480,6 +480,63 @@ app.get('/histories/getTopWebsites', Histories.getTopWebsites);
 
 /**
  * @swagger
+ * /histories/getTopWebsites/{userId}:
+ *   get:
+ *     description: Get most visited websites
+ *     tags: [Histories]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         type: string
+ *         required: true
+ *         description: "Authorization token"
+ *       - in: query
+ *         name: limit
+ *         type: number
+ *         required: false
+ *         description: "Limit of search results. Default equal 10."
+ *       - in: query
+ *         name: offset
+ *         type: number
+ *         required: false
+ *         description: "Offset of search results. Default equal 0."
+ *       - in: query
+ *         name: aggregateBy
+ *         type: string
+ *         required: false
+ *         description: "Default by 'url.full'."
+ *       - in: path
+ *         name: userId
+ *         type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Ok
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: History item deleted successfully
+ *       409:
+ *         description: The token is expired
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: The token is expired
+ *       500:
+ *         description: Internal Server Error
+ */
+app.get('/histories/getTopWebsites/:userId', Histories.getTopWebsitesOfUser);
+
+/**
+ * @swagger
  * /histories/getPreviousWebsites:
  *   post:
  *     description: Get previous users websites for specific url

@@ -107,15 +107,7 @@ function getTopWebsites(req, res) {
   of null to calculate accumulated values for all the input documents as a whole.
   */
 
-  History.aggregate([
-    { $group : {
-      _id: { url: `$${aggregateBy}` },
-      count: { $sum: 1 }
-    }},
-    { $sort : { count : -1 }},
-    { $skip: offset },
-    { $limit: limit }],
-    (error, data) => {
+  Database.getTopWebsites({ offset, limit, aggregateBy }, (error, data) => {
 
       if (error) {
 
@@ -137,10 +129,52 @@ function getTopWebsites(req, res) {
         });
 
         return res.status(200).json({ success: true, data: response });
+
       }
-    }
-  );
+  });
 };
+
+// ########################################
+// ######### getTopWebsitesOfUser #########
+// ########################################
+
+function getTopWebsitesOfUser(req, res) {
+
+  var userId = req.params.userId,
+      offset = parseInt(req.query.offset) || 0,
+      limit = parseInt(req.query.limit) || 10,
+      aggregateBy = req.query.aggregateBy || 'url.full';
+
+  Database.getTopWebsitesOfUser({ offset, limit, userId, aggregateBy }, (error, data) => {
+
+      if (error) {
+
+        return res.status(500).json({ message: error});
+
+      } else {
+
+        var response = [];
+
+        data.forEach((item, index) => {
+
+          var newItem = {};
+
+          newItem[aggregateBy] = item._id.url;
+          newItem.count = item.count;
+
+          response.push(newItem);
+
+        });
+
+        return res.status(200).json({ success: true, data: response });
+
+      }
+  });
+};
+
+// #######################################
+// ######### getPreviousWebsites #########
+// #######################################
 
 function getPreviousWebsites(req, res) {
 
@@ -183,5 +217,6 @@ module.exports = {
     search: search,
     remove: remove,
     getTopWebsites: getTopWebsites,
+    getTopWebsitesOfUser: getTopWebsitesOfUser,
     getPreviousWebsites: getPreviousWebsites
 };
