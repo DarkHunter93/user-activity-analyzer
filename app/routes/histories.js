@@ -478,4 +478,77 @@ app.delete('/histories/:historyId', Histories.remove);
  */
 app.get('/histories/getTopWebsites', Histories.getTopWebsites);
 
+/**
+ * @swagger
+ * /histories/getPreviousWebsites:
+ *   post:
+ *     description: Get previous users websites for specific url
+ *     tags: [Histories]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             token:
+ *               type: string
+ *               required: true
+ *             url:
+ *               type: string
+ *               example: www.example.com/books?id=666666
+ *               required: true
+ *             limit:
+ *               type: number
+ *               example: 200
+ *               default: 100
+ *               required: false
+ *     responses:
+ *       200:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             success:
+ *               type: boolean
+ *               example: true
+ *             data:
+ *               type: array
+ *               example: [
+ *                 {
+ *                   "_id": {
+ *                     "url": "www.example.com/books?id=666666",
+ *                     "connectionTitle": "Zwierzenia jeżozwierza - buy book on sale",
+ *                     "parentUrl": "www.google.com/search?q=example"
+ *                   },
+ *                 "count": 1
+ *                 },
+ *                 {
+ *                   "_id": {
+ *                     "url": "www.example.com/books?id=666666",
+ *                     "connectionTitle": "Zwierzenia jeżozwierza - buy book",
+ *                     "parentUrl": "www.google.com/search?q=example"
+ *                   },
+ *                   "count": 2
+ *                 }
+ *               ]
+ *       422:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             success:
+ *               type: boolean
+ *               example: false
+ *             message:
+ *               type: string
+ *               example: "`url` is null or undefined"
+ *
+ *       500:
+ *         description: Internal Server Error
+ */
+app.post('/histories/getPreviousWebsites', Histories.getPreviousWebsites);
+
 }

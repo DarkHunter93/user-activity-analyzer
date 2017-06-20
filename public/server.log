@@ -83,3 +83,11 @@
 {"level":"info","message":"::ffff:127.0.0.1 - POST /histories?limit=1000 HTTP/1.1 200 51855 - 318.376 ms\n","timestamp":"2017-06-16T15:07:02.471Z"}
 {"level":"info","message":"::ffff:127.0.0.1 - POST /histories?limit=1000 HTTP/1.1 200 514787 - 1292.196 ms\n","timestamp":"2017-06-16T15:07:43.866Z"}
 {"level":"info","message":"::ffff:127.0.0.1 - POST /histories?limit=1000 HTTP/1.1 200 514787 - 1149.086 ms\n","timestamp":"2017-06-16T15:09:16.506Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /login HTTP/1.1 200 1110 - 267.279 ms\n","timestamp":"2017-06-20T12:48:57.814Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /histories/getPreviousWebsites HTTP/1.1 200 26 - 164.946 ms\n","timestamp":"2017-06-20T12:49:06.411Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /histories/getPreviousWebsites HTTP/1.1 422 56 - 98.218 ms\n","timestamp":"2017-06-20T12:50:03.806Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /histories/getPreviousWebsites HTTP/1.1 200 311 - 137.337 ms\n","timestamp":"2017-06-20T12:50:34.788Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /histories/getPreviousWebsites HTTP/1.1 200 26 - 124.235 ms\n","timestamp":"2017-06-20T12:50:55.977Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /histories/getPreviousWebsites HTTP/1.1 200 26 - 116.764 ms\n","timestamp":"2017-06-20T12:50:58.969Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /histories/getPreviousWebsites HTTP/1.1 200 26 - 124.253 ms\n","timestamp":"2017-06-20T12:53:13.154Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /histories/getPreviousWebsites HTTP/1.1 200 707 - 149.357 ms\n","timestamp":"2017-06-20T12:53:22.368Z"}

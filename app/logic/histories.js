@@ -140,12 +140,48 @@ function getTopWebsites(req, res) {
       }
     }
   );
+};
 
+function getPreviousWebsites(req, res) {
+
+  var limit = parseInt(req.body.limit) || 100;
+
+  if (req.body.url) {
+
+    History.aggregate([
+      { $match: {
+          'url.full': req.body.url
+      }},
+      { $limit: limit },
+      { $group: {
+        _id: { url: '$url.full', connectionTitle: '$connection.title', parentUrl: '$parentUrl.full' },
+        count: { $sum: 1 }
+      }}],
+      (error, data) => {
+
+        if (error) {
+
+    			return res.status(500).json({ success: false, message: error});
+
+     		} else {
+
+     			return res.status(200).json({ success: true, data: data });
+
+        }
+      }
+    );
+
+  } else {
+
+    return res.status(422).json({ success: false, message: `'url' is null or undefined` });
+
+  }
 };
 
 module.exports = {
     save: save,
     search: search,
     remove: remove,
-    getTopWebsites: getTopWebsites
+    getTopWebsites: getTopWebsites,
+    getPreviousWebsites: getPreviousWebsites
 };
