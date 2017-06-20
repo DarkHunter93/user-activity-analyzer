@@ -150,16 +150,11 @@ app.get('/users', Users.get);
  *         type: string
  *         required: true
  *         description: "Authorization token"
- *       - in: query
- *         name: limit
- *         type: number
- *         required: false
- *         description: "Limit of users"
- *       - in: query
- *         name: offset
- *         type: number
- *         required: false
- *         description: "Offset of users"
+ *       - in: path
+ *         name: userId
+ *         type: string
+ *         required: true
+ *         description: "ID of user"
  *     responses:
  *       200:
  *         description: Ok

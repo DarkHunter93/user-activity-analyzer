@@ -126,3 +126,8 @@
 {"level":"info","message":"::ffff:127.0.0.1 - GET /users/ HTTP/1.1 200 1796 - 173.675 ms\n","timestamp":"2017-06-20T13:57:58.434Z"}
 {"level":"info","message":"::ffff:127.0.0.1 - GET /users/ HTTP/1.1 200 1472 - 156.609 ms\n","timestamp":"2017-06-20T14:00:53.235Z"}
 {"level":"info","message":"::ffff:127.0.0.1 - GET /users/8f323b7a-7380-4c7f-a184-320dd2456695 HTTP/1.1 200 198 - 138.182 ms\n","timestamp":"2017-06-20T14:01:02.681Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - PATCH /users/bb63cbf7-9bde-4e65-91eb-a128d4ce8c50 HTTP/1.1 200 39 - 171.434 ms\n","timestamp":"2017-06-20T14:04:47.257Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /histories?limit=1000 HTTP/1.1 200 514787 - 997.727 ms\n","timestamp":"2017-06-20T14:22:48.772Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /histories?limit=5000 HTTP/1.1 200 41462629 - 57506.172 ms\n","timestamp":"2017-06-20T14:24:44.934Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /users/174fcbe8-49bc-4d0b-bdc9-9d2ec7798bec HTTP/1.1 200 22 - 162.956 ms\n","timestamp":"2017-06-20T15:12:37.548Z"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /users/8f323b7a-7380-4c7f-a184-320dd2456695 HTTP/1.1 200 198 - 140.028 ms\n","timestamp":"2017-06-20T15:12:53.039Z"}

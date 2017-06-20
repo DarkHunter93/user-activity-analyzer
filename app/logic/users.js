@@ -86,7 +86,7 @@ function get(req, res) {
 
   var offset = parseInt(req.query.offset) || 0, limit = parseInt(req.query.limit) || 100;
 
-  User.find({}, '-_id -__v -password -admin -birthdate -gender -province')
+  User.find({}, '-_id -__v -password -admin')
       .limit(limit)
       .skip(offset)
       .exec((error, data) => {
@@ -105,13 +105,9 @@ function get(req, res) {
 
 function getUser(req, res) {
 
-  var userId = req.params.userId,
-      offset = parseInt(req.query.offset) || 0,
-      limit = parseInt(req.query.limit) || 100;
+  var userId = req.params.userId;
 
   User.find({ id: userId }, '-_id -__v -password -admin')
-      .limit(limit)
-      .skip(offset)
       .exec((error, data) => {
 
         if (error) {
@@ -120,7 +116,7 @@ function getUser(req, res) {
 
         } else {
 
-          return res.status(200).json({ count: data.length, users: data });
+          return res.status(200).json({ user: data });
 
         }
       });
@@ -147,6 +143,7 @@ function update(req, res) {
   var userId = req.params.userId,
       newLogin = req.body.newLogin,
       newPassword = req.body.newPassword,
+      currentPassword = req.body.currentPassword,
       newEmail = req.body.newEmail,
       newBirthdate = req.body.newBirthdate,
       newGender = req.body.newGender,
