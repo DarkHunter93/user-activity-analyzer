@@ -1,7 +1,7 @@
 var JWT         = require('jsonwebtoken');
 var UUID        = require('uuid/v4');
 var config      = require('../../config');
-var User        = require('../models/user');
+var User        = require('../../models/user');
 var Database    = require('../database');
 
 function register(req, res) {

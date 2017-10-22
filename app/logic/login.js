@@ -1,5 +1,5 @@
 var JWT       = require('jsonwebtoken');
-var User      = require('../models/user');
+var User      = require('../../models/user');
 var config    = require('../../config');
 
 function login(req, res) {

@@ -1,5 +1,5 @@
 var UUID        = require('uuid/v4');
-var History     = require('../models/history');
+var History     = require('../../models/history');
 var Database    = require('../database');
 
 // ########################

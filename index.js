@@ -1,37 +1,20 @@
-var express     = require('express');
-var bodyParser  = require('body-parser');
-var morgan      = require('morgan');
-var mongoose    = require('mongoose');
-var winston     = require('winston');
-var path        = require('path');
-var url         = require('url');
-var UUID        = require('uuid/v4');
-var swagger     = require('swagger-jsdoc');
-var cors        = require('cors');
-var config      = require('./config');
-var users       = require('./app/routes/users');
-var login       = require('./app/routes/login');
-var histories   = require('./app/routes/histories');
+//TODO w rozszerzeniu - walidacja pola rejestracji
+//TODO potwierdzanie rejestracji mailem
 
-var swaggerDefinition = {
-  info: {
-    title: 'User Activity Analyzer',
-    version: '0.5.0'
-  },
-  host: 'user-activity-analyzer.herokuapp.com',
-  basePath: '/',
-};
-
-// options for the swagger docs
-var options = {
-  swaggerDefinition: swaggerDefinition,
-  apis: ['./app/routes/users.js',
-         './app/routes/histories.js',
-         './app/routes/login.js'],
-};
+let express = require('express'),
+    bodyParser = require('body-parser'),
+    morgan = require('morgan'),
+    mongoose = require('mongoose'),
+    winston = require('winston'),
+    path = require('path'),
+    cors = require('cors'),
+    docs = require('./routes/docs'),
+    login = require('./routes/login'),
+    users = require('./routes/users'),
+    histories = require('./routes/histories');
 
 // options for the winston logger
-var logger = new winston.Logger({
+let logger = new winston.Logger({
     transports: [
         new winston.transports.File({
             level: 'info',
@@ -45,53 +28,79 @@ var logger = new winston.Logger({
         })
     ],
     exitOnError: false
-});
-
-logger.stream = {
-    write: function(message, encoding){
+}).stream = {
+    write: function (message, encoding) {
         logger.info(message);
     }
 };
 
-var swaggerSpec = swagger(options);
-var app         = express();
+// initialize app
+let app = express();
 
-app.use(morgan('short', { "stream": logger.stream }));
+// if you're using local copy you should import data from config.js file
+// if you're using Heroku App you should use Heroku Environment Variables
+try {
+    var config = require('./config');
+}
+catch (e) {
+    console.error('Cannot find config.js');
+}
+
+app.use(morgan('short', {"stream": logger.stream}));
 app.use(morgan('dev'));
 
+// set port number
+try {
+    app.set('PORT', process.env.PORT || config.PORT);
+}
+catch (e) {
+    throw new Error('Cannot set PORT');
+}
+
 // connect to database
-mongoose.connect(config.database);
+try {
+    mongoose.connect(process.env.MONGODB_URI || config.MONGODB_URI);
+}
+catch (e) {
+    throw new Error('Cannot connect to the database');
+}
 
 // set global variable for JWT
-app.set('superSecret', config.secret);
+// app.set('superSecret', config.secret);
+// try {
+//     app.set('superSecret', proccess.env.JWT_SECRET || config.JWT_SECRET);
+// }
+// catch (e) {
+//     throw new Error('Cannot set JWT_SECRET');
+// }
 
 // parse requests bodies to JSON format
-app.use(bodyParser.json( { limit: '5mb'} ));
-app.use(bodyParser.urlencoded({ extended: false, limit: '5mb' }));
+app.use(bodyParser.json({limit: '5mb'}));
+app.use(bodyParser.urlencoded({extended: false, limit: '5mb'}));
 
 // set public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors());
 
-app.get('/api-docs.json', function(req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  res.send(swaggerSpec);
+app.use('/docs', docs);
+app.use('/login', login);
+app.use('/users', users);
+app.use('/histories', histories);
+
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+    let error = new Error('Not Found');
+    error.status = 404;
+    next(error);
 });
 
-login.setup(app);
-users.setup(app);
-histories.setup(app);
+// error handler
+app.use(function (error, req, res, next) {
+    res.status(error.status || 500);
+    res.json({message: error.message});
+});
 
-app.get('*', wrong);
-app.delete('*', wrong);
-app.patch('*', wrong);
-app.post('*', wrong);
-
-var port = process.env.PORT || 8888;
-app.listen(port);
-console.log('Server running at http://localhost:' + port);
-
-function wrong(req, res) {
-  res.status(404).json({ message: 'The requested resource does not exist on the server' });
-}
+app.listen(app.get('PORT'), function () {
+    console.log('Node app is running on port', app.get('PORT'));
+});
