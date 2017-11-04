@@ -4,13 +4,23 @@
 
 'use strict';
 
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken'),
+    tokenGenerator = require('./TokenGenerator');
+
+try {
+    var config = require('../../config');
+}
+catch (e) {
+    console.error('Cannot find config.js');
+}
+
+let JWT_SECRET = process.env.JWT_SECRET || config.JWT_SECRET;
 
 function authBasic(req, res, next) {
     let token = req.headers['x-access-token'];
 
     if (token) {
-        jwt.verify(token, 'secret', (error, decoded) => {
+        jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] }, (error, decoded) => {
             if (error) {
                 switch(error.name) {
                     case 'TokenExpiredError':
@@ -25,6 +35,9 @@ function authBasic(req, res, next) {
             } else {
                 if ((decoded.data.rights.basic === true && decoded.data.userId === req.params.userId)
                     || decoded.data.rights.admin === true) {
+                    let refreshToken = tokenGenerator.refresh(token);
+                    res.set('X-Token', refreshToken);
+                    res.set('Expires', jwt.decode(refreshToken).exp);
                     next();
                 } else {
                     return res.status(401).json({message: 'No rights for execution this operation'})

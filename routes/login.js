@@ -3,10 +3,10 @@
 const express = require('express'),
     router = express.Router();
 
-var jwt = require('jsonwebtoken');
+let tokenGenerator = require('../src/auth/TokenGenerator');
 
 router.post('/', (req, res) => {
-    let token = jwt.sign({
+    let token = tokenGenerator.sign({
         data: {
             userId: '51963fbd-8259-427e-8cf7-50b4bd3b381a',
             rights: {
@@ -14,7 +14,7 @@ router.post('/', (req, res) => {
                 admin: false
             }
         }
-    }, 'secret', { expiresIn: '1h' });
+    });
 
     if (token) {
         console.log(token);

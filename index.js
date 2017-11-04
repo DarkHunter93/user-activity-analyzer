@@ -68,12 +68,12 @@ catch (e) {
 }
 
 // set JWT_SECRET for JSON Web Tokens
-try {
-    var JWT_SECRET = process.env.JWT_SECRET || config.JWT_SECRET;
-}
-catch (e) {
-    throw new Error('Cannot set JWT_SECRET');
-}
+// try {
+//     app.set('JWT_SECRET', process.env.JWT_SECRET || config.JWT_SECRET);
+// }
+// catch (e) {
+//     throw new Error('Cannot set JWT_SECRET');
+// }
 
 // parse requests bodies to JSON format
 app.use(bodyParser.json({limit: '5mb'}));
