@@ -13,7 +13,8 @@ catch (e) {
     console.error('Cannot find config.js');
 }
 
-let JWT_SECRET = process.env.JWT_SECRET || config.JWT_SECRET;
+let JWT_SECRET = process.env.JWT_SECRET || config.JWT_SECRET,
+    TOKEN_EXP = process.env.TOKEN_EXP || config.TOKEN_EXP;
 
 function TokenGenerator (secretOrPrivateKey, secretOrPublicKey, options) {
     this.secretOrPrivateKey = secretOrPrivateKey;
@@ -36,6 +37,6 @@ TokenGenerator.prototype.refresh = function(token) {
     return jwt.sign(payload, this.secretOrPrivateKey, jwtSignOptions);
 };
 
-let tokenGenerator = new TokenGenerator(JWT_SECRET, JWT_SECRET, { algorithm: 'HS256', keyid: '1', noTimestamp: false, expiresIn: '1m', notBefore: '2s' });
+let tokenGenerator = new TokenGenerator(JWT_SECRET, JWT_SECRET, { algorithm: 'HS256', keyid: '1', noTimestamp: false, expiresIn: TOKEN_EXP, notBefore: '2s' });
 
 module.exports = tokenGenerator;
