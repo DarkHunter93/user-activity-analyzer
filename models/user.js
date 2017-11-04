@@ -56,6 +56,4 @@ userSchema.methods.validPassword = (password, hashPassword) => {
     return bcrypt.compareSync(password, hashPassword);
 };
 
-//TODO zapisywanie użytkowników z zaszyfrowanym hasłem
-
 module.exports = mongoose.model('User', userSchema, 'users');

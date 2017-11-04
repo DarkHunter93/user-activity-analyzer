@@ -13,7 +13,8 @@ let express = require('express'),
     docs = require('./routes/docs'),
     login = require('./routes/login'),
     users = require('./routes/users'),
-    histories = require('./routes/histories');
+    histories = require('./routes/histories'),
+    tokens = require('./routes/tokens');
 
 // options for the winston logger
 let logger = new winston.Logger({
@@ -80,6 +81,7 @@ app.use('/docs', docs);
 app.use('/login', login);
 app.use('/users', users);
 app.use('/histories', histories);
+app.use('/tokens', tokens);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

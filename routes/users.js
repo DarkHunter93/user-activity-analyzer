@@ -1,9 +1,6 @@
 'use strict';
 
 //TODO DELETE /history
-//TODO autentyfikacja
-//TODO odnawianie tokenów
-//TODO obsługa nagłówków HTTP dla tokenów
 
 const express = require('express'),
     user = require('../src/users/user'),
@@ -24,7 +21,7 @@ router.get('/search', (req, res) => {
     } else if (Object.keys(req.query).length > 1) {
         res.status(409).json({ message: 'Too many properties' });
     } else if (!req.query.login) {
-        res.status(409).json({ message: 'For now only login property is available to search' });
+        res.status(409).json({ message: 'For now, only login property is available to search' });
     } else {
         res.status(422).json({ message: 'Nothing to search' });
     }
@@ -61,7 +58,7 @@ router.post('/', (req, res) => {
     }
 });
 
-router.delete('/:userId', (req, res) => {
+router.delete('/:userId', auth.basic, (req, res) => {
     user.remove(req.params.userId, (error) => {
         if (error) {
             res.status(error.status).json({ message: error.message });
@@ -71,7 +68,7 @@ router.delete('/:userId', (req, res) => {
     });
 });
 
-router.put('/:userId', (req, res) => {
+router.put('/:userId', auth.basic, (req, res) => {
     if (req.body.login && req.body.password && req.body.email) {
         user.replace(req.params.userId, req.body, (error) => {
             if (error) {
@@ -85,7 +82,7 @@ router.put('/:userId', (req, res) => {
     }
 });
 
-router.patch('/:userId', (req, res) => {
+router.patch('/:userId', auth.basic, (req, res) => {
     if (req.body) {
         user.update(req.params.userId, req.body, (error) => {
             if (error) {
@@ -99,7 +96,7 @@ router.patch('/:userId', (req, res) => {
     }
 });
 
-router.get('/:userId/histories', (req, res) => {
+router.get('/:userId/histories', auth.basic, (req, res) => {
     let offset = parseInt(req.query.offset) || 0,
         limit = parseInt(req.query.limit) || 10,
         sort = req.query.sort || -1;
@@ -113,7 +110,7 @@ router.get('/:userId/histories', (req, res) => {
     });
 });
 
-router.get('/:userId/histories/top', (req, res) => {
+router.get('/:userId/histories/top', auth.basic, (req, res) => {
     let offset = parseInt(req.query.offset) || 0,
         limit = parseInt(req.query.limit) || 10,
         aggregateBy = req.query.aggregateBy || 'url.full';
@@ -127,7 +124,7 @@ router.get('/:userId/histories/top', (req, res) => {
     });
 });
 
-router.delete('/:userId/histories', (req, res) => {
+router.delete('/:userId/histories', auth.basic, (req, res) => {
     res.json({ message: 'Without authentication resource is unavailable' });
 });
 
