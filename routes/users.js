@@ -8,6 +8,7 @@
 const express = require('express'),
     user = require('../src/users/user'),
     history = require('../src/histories/history'),
+    auth = require('../src/auth/auth'),
     router = express.Router();
 
 router.get('/search', (req, res) => {
@@ -29,7 +30,7 @@ router.get('/search', (req, res) => {
     }
 });
 
-router.get('/:userId', (req, res) => {
+router.get('/:userId', auth.basic, (req, res) => {
     user.get(req.params.userId, (error, user) => {
         if (error) {
             res.status(error.status).json({ message: error.message });

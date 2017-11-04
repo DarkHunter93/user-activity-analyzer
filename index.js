@@ -1,6 +1,8 @@
 //TODO w rozszerzeniu - walidacja pola rejestracji
 //TODO potwierdzanie rejestracji mailem
 
+'use strict';
+
 let express = require('express'),
     bodyParser = require('body-parser'),
     morgan = require('morgan'),
@@ -65,14 +67,13 @@ catch (e) {
     throw new Error('Cannot connect to the database');
 }
 
-// set global variable for JWT
-// app.set('superSecret', config.secret);
-// try {
-//     app.set('superSecret', proccess.env.JWT_SECRET || config.JWT_SECRET);
-// }
-// catch (e) {
-//     throw new Error('Cannot set JWT_SECRET');
-// }
+// set JWT_SECRET for JSON Web Tokens
+try {
+    var JWT_SECRET = process.env.JWT_SECRET || config.JWT_SECRET;
+}
+catch (e) {
+    throw new Error('Cannot set JWT_SECRET');
+}
 
 // parse requests bodies to JSON format
 app.use(bodyParser.json({limit: '5mb'}));
