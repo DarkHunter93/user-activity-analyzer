@@ -67,14 +67,6 @@ catch (e) {
     throw new Error('Cannot connect to the database');
 }
 
-// set JWT_SECRET for JSON Web Tokens
-// try {
-//     app.set('JWT_SECRET', process.env.JWT_SECRET || config.JWT_SECRET);
-// }
-// catch (e) {
-//     throw new Error('Cannot set JWT_SECRET');
-// }
-
 // parse requests bodies to JSON format
 app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({extended: false, limit: '5mb'}));

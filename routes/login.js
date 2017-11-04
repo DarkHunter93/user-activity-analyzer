@@ -1,26 +1,22 @@
 'use strict';
 
 const express = require('express'),
+    login = require('../src/login'),
     router = express.Router();
 
-let tokenGenerator = require('../src/auth/TokenGenerator');
-
 router.post('/', (req, res) => {
-    let token = tokenGenerator.sign({
-        data: {
-            userId: '51963fbd-8259-427e-8cf7-50b4bd3b381a',
-            rights: {
-                basic: true,
-                admin: false
+    if (req.body.login && req.body.password) {
+        login.login(req.body.login, req.body.password, (error, authToken) => {
+            if (!error) {
+                res.set('X-Token', authToken.token);
+                res.set('Expires', authToken.exp);
+                res.sendStatus(204);
+            } else {
+                res.status(error.status).json({ message: error.message });
             }
-        }
-    });
-
-    if (token) {
-        console.log(token);
-        res.sendStatus(200);
+        });
     } else {
-        res.sendStatus(500);
+        res.status(422).json({ message: 'Login or password are null or undefined' });
     }
 });
 

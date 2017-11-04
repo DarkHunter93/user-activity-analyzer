@@ -55,8 +55,11 @@ userSchema.methods.generateHash = (item) => {
     return bcrypt.hashSync(item, bcrypt.genSaltSync(8), null);
 };
 
-//TODO określić docelową kolekcję w modelu User
-//TODO zapisywanie użytkowników z zaszyfrowanym hasłem
-//TODO weryfikowanie hasła
+// checking if password is valid
+userSchema.methods.validPassword = (password, hashPassword) => {
+    return bcrypt.compareSync(password, hashPassword);
+};
 
-module.exports = mongoose.model('User', userSchema);
+//TODO zapisywanie użytkowników z zaszyfrowanym hasłem
+
+module.exports = mongoose.model('User', userSchema, 'users');
