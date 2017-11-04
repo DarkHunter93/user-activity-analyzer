@@ -15,7 +15,7 @@
  *       - application/json
  *     parameters:
  *       - in: header
- *         name: token
+ *         name: X-Access-Token
  *         type: string
  *         required: true
  *         description: Authorization token
@@ -59,7 +59,7 @@
  *       - application/json
  *     parameters:
  *       - in: header
- *         name: token
+ *         name: X-Access-Token
  *         type: string
  *         required: true
  *         description: Authorization token
@@ -171,7 +171,7 @@
  *       - application/json
  *     parameters:
  *       - in: header
- *         name: token
+ *         name: X-Access-Token
  *         type: string
  *         required: true
  *         description: Authorization token
@@ -210,7 +210,7 @@
  *       - application/json
  *     parameters:
  *       - in: header
- *         name: token
+ *         name: X-Access-Token
  *         type: string
  *         required: true
  *         description: Authorization token

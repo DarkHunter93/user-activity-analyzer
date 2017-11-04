@@ -13,7 +13,7 @@ let docs = swagger({
         host: 'user-activity-analyzer.herokuapp.com',
         basePath: '/',
     },
-    apis: ['./docs/users.js','./docs/histories.js'],
+    apis: ['./docs/users.js','./docs/histories.js', './docs/login.js', './docs/tokens.js'],
 });
 
 router.get('/api-docs.json', (req, res) => {
