@@ -11,7 +11,3 @@
 ## Documentation
 
 For documentation, visit: http://user-activity-analyzer.herokuapp.com/docs.html
-
-`db.copyDatabase('user-activity-analyzer','user-activity-analyzer-mlab','ds151060.mlab.com:51060',
-'Server','Server918273')`
-
