@@ -43,10 +43,6 @@ let userSchema = mongoose.Schema({
 			required: true,
 			default: false
 		}
-	},
-	authToken: {
-    	type: String,
-		required: true
 	}
 });
 

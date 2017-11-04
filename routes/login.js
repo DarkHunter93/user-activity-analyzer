@@ -6,13 +6,15 @@ const express = require('express'),
 
 router.post('/', (req, res) => {
     if (req.body.login && req.body.password) {
-        login.login(req.body.login, req.body.password, (error, authToken) => {
-            if (!error) {
+        login(req.body.login, req.body.password, (error, authToken) => {
+            if (authToken) {
                 res.set('X-Token', authToken.token);
                 res.set('Expires', authToken.exp);
                 res.sendStatus(204);
-            } else {
+            } else if (error) {
                 res.status(error.status).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: 'Unknown error' });
             }
         });
     } else {

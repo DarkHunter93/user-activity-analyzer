@@ -8,11 +8,8 @@ let createError = require('../createError'),
     UUID = require('uuid/v4'),
     User = require('../../models/user');
 
-function create(newUser, callback) {
-
-    newUser.id = UUID();
-
-    User.findOne({ login: newUser.login }, (error, user) => {
+function create(user, callback) {
+    User.findOne({ login: user.login }, (error, profiles) => {
         if (error) {
 
             /*
@@ -21,7 +18,7 @@ function create(newUser, callback) {
             */
 
             callback(createError(500, error.message));
-        } else if (user) {
+        } else if (profiles) {
 
             /*
             409: the request could not be completed due to a conflict with the current
@@ -31,8 +28,12 @@ function create(newUser, callback) {
 
             callback(createError(409, 'Login is already in use'));
         } else {
-
-            User.create(newUser, (error) => {
+            let newUser = Object.assign(new User(), user);
+            newUser.id = UUID();
+            console.log(newUser);
+            newUser.password = newUser.generateHash(user.password);
+            console.log(newUser);
+            newUser.save((error) => {
                 if (error) {
                     callback(createError(500, error.message));
                 } else {

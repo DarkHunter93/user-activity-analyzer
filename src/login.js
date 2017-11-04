@@ -4,6 +4,8 @@
 
 'use strict';
 
+const jwt = require('jsonwebtoken');
+
 let User = require('../models/user'),
     tokenGenerator = require('./auth/TokenGenerator'),
     createError = require('./createError');
@@ -24,7 +26,7 @@ function login(username, password, callback) {
                 }
             });
 
-            return callback(null, token);
+            return callback(null, { token: token, exp: jwt.decode(token).exp });
         }
     });
 }
