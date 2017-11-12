@@ -28,7 +28,7 @@
  *               type: string
  *               required: true
  *     responses:
- *       204:
+ *       200:
  *         description: User logged successfully
  *       422:
  *         description: User not found or wrong password

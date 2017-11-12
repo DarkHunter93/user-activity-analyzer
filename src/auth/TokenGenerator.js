@@ -33,7 +33,7 @@ TokenGenerator.prototype.refresh = function(token) {
     delete payload.exp;
     delete payload.nbf;
     delete payload.jti;
-    const jwtSignOptions = Object.assign({ }, this.options);
+    const jwtSignOptions = Object.assign({}, this.options);
     return jwt.sign(payload, this.secretOrPrivateKey, jwtSignOptions);
 };
 

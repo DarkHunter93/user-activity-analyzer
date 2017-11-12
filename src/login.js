@@ -26,7 +26,7 @@ function login(username, password, callback) {
                 }
             });
 
-            return callback(null, { token: token, exp: jwt.decode(token).exp });
+            return callback(null, { token: token, exp: jwt.decode(token).exp, userId: user.id });
         }
     });
 }

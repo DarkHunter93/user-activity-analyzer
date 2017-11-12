@@ -6,11 +6,11 @@ const express = require('express'),
 
 router.post('/', (req, res) => {
     if (req.body.login && req.body.password) {
-        login(req.body.login, req.body.password, (error, authToken) => {
-            if (authToken) {
-                res.set('X-Token', authToken.token);
-                res.set('Expires', authToken.exp);
-                res.sendStatus(204);
+        login(req.body.login, req.body.password, (error, data) => {
+            if (data) {
+                res.set('X-Token', data.token);
+                res.set('Expires', data.exp);
+                res.status(200).json({ userId: data.userId });
             } else if (error) {
                 res.status(error.status).json({ message: error.message });
             } else {

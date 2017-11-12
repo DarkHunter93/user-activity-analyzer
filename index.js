@@ -1,5 +1,8 @@
-//TODO w rozszerzeniu - walidacja pola rejestracji
-//TODO potwierdzanie rejestracji mailem
+//TODO 48h żywotności
+//TODO maksymalna ilość znaków dla loginu
+//TODO regex dla emaila
+//TODO update dokumentacji o Patch i Put
+//TODO nowe konta i przeklejenie ID
 
 'use strict';
 
