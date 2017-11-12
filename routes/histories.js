@@ -2,6 +2,7 @@
 
 const express = require('express'),
     history = require('../src/histories/history'),
+    auth = require('../src/auth/auth'),
     router = express.Router();
 
 router.get('/', (req, res) => {
@@ -23,7 +24,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.post('/', (req, res) => {
+router.post('/', auth.basic, (req, res) => {
     if (req.body) {
         history.create(req.body, (error) => {
             if (error) {

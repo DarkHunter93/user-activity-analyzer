@@ -35,7 +35,14 @@ function authBasic(req, res, next) {
             } else {
                 if ((decoded.data.rights.basic === true && decoded.data.userId === req.params.userId)
                     || decoded.data.rights.admin === true) {
+
                     let refreshToken = tokenGenerator.refresh(token);
+                    res.set('X-Token', refreshToken);
+                    res.set('Expires', jwt.decode(refreshToken).exp);
+                    next();
+                } else if (decoded.data.rights.basic === true && req.originalUrl === '/histories') {
+                    let refreshToken = tokenGenerator.refresh(token);
+                    req.body.ownerId = decoded.data.userId;
                     res.set('X-Token', refreshToken);
                     res.set('Expires', jwt.decode(refreshToken).exp);
                     next();
