@@ -3,9 +3,11 @@
  */
 
 let checkToken = require('./checkToken'),
-    checkBasicRights = require('./checkBasicRights');
+    checkBasicRights = require('./checkBasicRights'),
+    checkExtendedRights = require('./checkExtendedRights');
 
 module.exports = {
     checkToken: checkToken,
-    basic: checkBasicRights
+    basic: checkBasicRights,
+    extended: checkExtendedRights
 };

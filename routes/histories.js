@@ -59,6 +59,8 @@ router.get('/top', (req, res) => {
     });
 });
 
+//TODO stronicowanie dla /previous
+
 router.get('/previous', (req, res) => {
     let limit = parseInt(req.query.limit) || 100,
         matchBy = req.query.matchBy || 'url.full';

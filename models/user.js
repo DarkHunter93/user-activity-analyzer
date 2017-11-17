@@ -48,6 +48,11 @@ let userSchema = mongoose.Schema({
 			required: true,
 			default: true
 		},
+        extended: {
+            type: Boolean,
+            required: true,
+            default: false
+        },
 		admin: {
     		type: Boolean,
 			required: true,
