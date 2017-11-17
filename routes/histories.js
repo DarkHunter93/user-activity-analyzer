@@ -50,7 +50,7 @@ router.get('/top', (req, res) => {
     if (req.query.offset) delete request.query.offset;
     if (req.query.limit) delete request.query.limit;
 
-    history.getTop(offset, limit, aggregateBy, null, (error, data) => {
+    history.getTop(offset, limit, aggregateBy, null, req.originalUrl, (error, data) => {
         if (error) {
             res.status(error.status).json({ message: error.message });
         } else {

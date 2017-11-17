@@ -115,7 +115,7 @@ router.get('/:userId/histories/top', [auth.checkToken, auth.basic], (req, res) =
         limit = parseInt(req.query.limit) || 10,
         aggregateBy = req.query.aggregateBy || 'url.full';
 
-    history.getTop(offset, limit, aggregateBy, req.params.userId, (error, data) => {
+    history.getTop(offset, limit, aggregateBy, req.params.userId, req.originalUrl, (error, data) => {
         if (error) {
             res.status(error.status).json({ message: error.message });
         } else {

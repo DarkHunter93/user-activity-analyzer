@@ -8,8 +8,6 @@ let createError = require('../createError'),
     UUID = require('uuid/v4'),
     History = require('../../models/history');
 
-//TODO lepsza obsługa błędów z Mongoose
-
 function create(historyItem, callback) {
 
     historyItem.id = UUID();

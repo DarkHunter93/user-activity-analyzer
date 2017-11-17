@@ -5,9 +5,10 @@
 'use strict';
 
 let createError = require('../createError'),
-    History = require('../../models/history');
+    History = require('../../models/history'),
+    paging = require('../paging');
 
-function doMapping(data, aggregateBy, callback) {
+function doMapping(data, aggregateBy) {
     let newData = [];
     data.forEach((item) => {
         let newItem = {};
@@ -15,10 +16,10 @@ function doMapping(data, aggregateBy, callback) {
         newItem.count = item.count;
         newData.push(newItem);
     });
-    callback(null, newData);
+    return newData;
 }
 
-function getTop(offset, limit, aggregateBy, userId, callback) {
+function getTop(offset, limit, aggregateBy, userId, pathName, callback) {
 
     /*
     The _id field is mandatory; however, you can specify an _id value
@@ -39,7 +40,7 @@ function getTop(offset, limit, aggregateBy, userId, callback) {
                 if (error) {
                     return callback(createError(500, error.message));
                 } else {
-                    doMapping(data, aggregateBy, callback);
+                    paging(pathName, offset, limit, aggregateBy, doMapping(data, aggregateBy));
                 }
             }
         );
@@ -56,7 +57,7 @@ function getTop(offset, limit, aggregateBy, userId, callback) {
                 if (error) {
                     return callback(createError(500, error.message));
                 } else {
-                    doMapping(data, aggregateBy, callback);
+                    paging(pathName, offset, limit, aggregateBy, doMapping(data, aggregateBy));
                 }
             }
         );
