@@ -101,7 +101,7 @@ router.get('/:userId/histories', [auth.checkToken, auth.basic], (req, res) => {
         limit = parseInt(req.query.limit) || 10,
         sort = req.query.sort || -1;
 
-    history.get(offset, limit, sort, { ownerId: req.params.userId }, (error, data) => {
+    history.get(offset, limit, sort, { ownerId: req.params.userId }, req.originalUrl, (error, data) => {
         if (error) {
             res.status(error.status).json({ message: error.message });
         } else {

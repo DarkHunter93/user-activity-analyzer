@@ -37,7 +37,7 @@ function getTop(offset, limit, aggregateBy, userId, callback) {
                 { $limit: limit }],
             (error, data) => {
                 if (error) {
-                    callback(createError(500, error.message));
+                    return callback(createError(500, error.message));
                 } else {
                     doMapping(data, aggregateBy, callback);
                 }
@@ -54,7 +54,7 @@ function getTop(offset, limit, aggregateBy, userId, callback) {
                 { $limit: limit }],
             (error, data) => {
                 if (error) {
-                    callback(createError(500, error.message));
+                    return callback(createError(500, error.message));
                 } else {
                     doMapping(data, aggregateBy, callback);
                 }

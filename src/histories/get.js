@@ -4,19 +4,23 @@
 
 'use strict';
 
+const queryString = require('querystring');
+
 let createError = require('../createError'),
-    History = require('../../models/history');
+    History = require('../../models/history'),
+    paging = require('../paging');
 
-function get(offset, limit, sort, searchingProperties, callback) {
+function get(offset, limit, sort, searchingProperties, pathName, callback) {
 
-    if (sort === "DESC") {
-        sort = -1;
-    } else if (sort === "ASC") {
+    if (sort === "ASC") {
         sort = 1;
     } else {
         sort = -1;
     }
-//TODO stronicowanie
+
+    if (limit > 1000) {
+        return callback(createError(409, 'Max limit is 1000'));
+    }
 
     History.find(searchingProperties, '-_id -__v', {
         skip: offset,
@@ -26,9 +30,9 @@ function get(offset, limit, sort, searchingProperties, callback) {
         }
     }).exec((error, data) => {
         if (error) {
-            callback(createError(500, error.message));
+            return callback(createError(500, error.message));
         } else {
-            callback(null, data);
+            return callback(null, paging(pathName, offset, limit, searchingProperties, data));
         }
     });
 }

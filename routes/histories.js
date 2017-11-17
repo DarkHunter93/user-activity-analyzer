@@ -15,11 +15,14 @@ router.get('/', (req, res) => {
     if (req.query.limit) delete request.query.limit;
     if (req.query.sort) delete request.query.sort;
 
-    history.get(offset, limit, sort, request.query, (error, data) => {
+    history.get(offset, limit, sort, request.query, req.originalUrl, (error, data) => {
         if (error) {
             res.status(error.status).json({ message: error.message });
         } else {
-            res.json({ count: data.length, data: data });
+            res.json({
+                count: data.length,
+                data: data.data,
+                next:  data.next });
         }
     });
 });
