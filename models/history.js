@@ -21,6 +21,10 @@ module.exports = mongoose.model('History', new Schema({
         }
     },
     url: {
+        id: {
+            type: String,
+            required: true
+        },
         domain: {
             type: String,
             required: true
@@ -47,6 +51,10 @@ module.exports = mongoose.model('History', new Schema({
         }
     },
     parentUrl: {
+        id: {
+            type: String,
+            required: true
+        },
         domain: {
             type: String,
             required: false

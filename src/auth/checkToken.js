@@ -16,7 +16,7 @@ catch (e) {
 
 let JWT_SECRET = process.env.JWT_SECRET || config.JWT_SECRET;
 
-function authBasic(req, res, next) {
+function checkToken(req, res, next) {
     let token = req.headers['x-access-token'];
 
     if (token) {
@@ -33,22 +33,11 @@ function authBasic(req, res, next) {
                         return res.status(500).json({ message: 'Decoding token error' });
                 }
             } else {
-                if ((decoded.data.rights.basic === true && decoded.data.userId === req.params.userId)
-                    || decoded.data.rights.admin === true) {
-
-                    let refreshToken = tokenGenerator.refresh(token);
-                    res.set('X-Token', refreshToken);
-                    res.set('Expires', jwt.decode(refreshToken).exp);
-                    next();
-                } else if (decoded.data.rights.basic === true && req.originalUrl === '/histories') {
-                    let refreshToken = tokenGenerator.refresh(token);
-                    req.body.ownerId = decoded.data.userId;
-                    res.set('X-Token', refreshToken);
-                    res.set('Expires', jwt.decode(refreshToken).exp);
-                    next();
-                } else {
-                    return res.status(401).json({message: 'No rights for execution this operation'})
-                }
+                let refreshToken = tokenGenerator.refresh(token);
+                res.set('X-Token', refreshToken);
+                res.set('Expires', jwt.decode(refreshToken).exp);
+                req.user = decoded.data;
+                next();
             }
         });
     } else {
@@ -56,4 +45,4 @@ function authBasic(req, res, next) {
     }
 }
 
-module.exports = authBasic;
+module.exports = checkToken;

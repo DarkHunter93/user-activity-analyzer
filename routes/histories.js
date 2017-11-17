@@ -24,7 +24,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.post('/', auth.basic, (req, res) => {
+router.post('/', [auth.checkToken, auth.basic], (req, res) => {
     if (req.body) {
         history.create(req.body, (error) => {
             if (error) {

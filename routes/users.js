@@ -27,7 +27,7 @@ router.get('/search', (req, res) => {
     }
 });
 
-router.get('/:userId', auth.basic, (req, res) => {
+router.get('/:userId', [auth.checkToken, auth.basic], (req, res) => {
     user.get(req.params.userId, (error, user) => {
         if (error) {
             res.status(error.status).json({ message: error.message });
@@ -58,7 +58,7 @@ router.post('/', (req, res) => {
     }
 });
 
-router.delete('/:userId', auth.basic, (req, res) => {
+router.delete('/:userId', [auth.checkToken, auth.basic], (req, res) => {
     user.remove(req.params.userId, (error) => {
         if (error) {
             res.status(error.status).json({ message: error.message });
@@ -68,7 +68,7 @@ router.delete('/:userId', auth.basic, (req, res) => {
     });
 });
 
-router.put('/:userId', auth.basic, (req, res) => {
+router.put('/:userId', [auth.checkToken, auth.basic], (req, res) => {
     if (req.body.login && req.body.password && req.body.email) {
         user.replace(req.params.userId, req.body, (error) => {
             if (error) {
@@ -82,7 +82,7 @@ router.put('/:userId', auth.basic, (req, res) => {
     }
 });
 
-router.patch('/:userId', auth.basic, (req, res) => {
+router.patch('/:userId', [auth.checkToken, auth.basic], (req, res) => {
     if (req.body) {
         user.update(req.params.userId, req.body, (error) => {
             if (error) {
@@ -96,7 +96,7 @@ router.patch('/:userId', auth.basic, (req, res) => {
     }
 });
 
-router.get('/:userId/histories', auth.basic, (req, res) => {
+router.get('/:userId/histories', [auth.checkToken, auth.basic], (req, res) => {
     let offset = parseInt(req.query.offset) || 0,
         limit = parseInt(req.query.limit) || 10,
         sort = req.query.sort || -1;
@@ -110,7 +110,7 @@ router.get('/:userId/histories', auth.basic, (req, res) => {
     });
 });
 
-router.get('/:userId/histories/top', auth.basic, (req, res) => {
+router.get('/:userId/histories/top', [auth.checkToken, auth.basic], (req, res) => {
     let offset = parseInt(req.query.offset) || 0,
         limit = parseInt(req.query.limit) || 10,
         aggregateBy = req.query.aggregateBy || 'url.full';
@@ -124,8 +124,8 @@ router.get('/:userId/histories/top', auth.basic, (req, res) => {
     });
 });
 
-router.delete('/:userId/histories', auth.basic, (req, res) => {
-    res.json({ message: 'Without authentication resource is unavailable' });
+router.delete('/:userId/histories', [auth.checkToken, auth.basic], (req, res) => {
+    res.status(500).json({ message: 'Resource is unavailable' });
 });
 
 module.exports = router;

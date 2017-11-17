@@ -7,6 +7,9 @@
 let createError = require('../createError'),
     History = require('../../models/history');
 
+//TODO opracować getPrevious dla indywidualnej strony (nie globalnie)
+//TODO więcej możliwości dla matchBy i matchUrl
+
 function getPrevious(limit, matchBy, matchUrl, callback) {
     let match = {};
     match[matchBy] = matchUrl;

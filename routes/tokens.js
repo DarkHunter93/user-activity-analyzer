@@ -8,7 +8,7 @@ const express = require('express'),
     auth = require('../src/auth/auth'),
     router = express.Router();
 
-router.get('/:userId', auth.basic, (req, res) => {
+router.get('/:userId', [auth.checkToken, auth.basic], (req, res) => {
     res.sendStatus(204);
 });
 

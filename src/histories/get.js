@@ -16,6 +16,7 @@ function get(offset, limit, sort, searchingProperties, callback) {
     } else {
         sort = -1;
     }
+//TODO stronicowanie
 
     History.find(searchingProperties, '-_id -__v', {
         skip: offset,

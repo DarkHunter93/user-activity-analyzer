@@ -32,6 +32,16 @@ let userSchema = mongoose.Schema({
         type: String,
         required: false
     },
+    settings: {
+        blackList: {
+            type: Array,
+            required: false
+        }
+    },
+    firm: {
+        type: String,
+        required: false
+    },
 	rights: {
     	basic: {
     		type: Boolean,
@@ -45,6 +55,10 @@ let userSchema = mongoose.Schema({
 		}
 	}
 });
+
+//TODO dodawanie elementów do tablicy blackList
+//TODO sprawdzić, czy dodawanie property firm działa
+//TODO stronicowanie
 
 // generating a hash
 userSchema.methods.generateHash = (item) => {
