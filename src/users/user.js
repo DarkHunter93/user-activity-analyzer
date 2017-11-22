@@ -2,7 +2,8 @@
  * Created by Kedzierski Dawid on 22.10.17.
  */
 
-let get = require('./get'),
+let getUser = require('./getUser'),
+    getUsers = require('./getUsers'),
     create = require('./create'),
     remove = require('./remove'),
     replace = require('./replace'),
@@ -10,7 +11,8 @@ let get = require('./get'),
     search = require('./search');
 
 module.exports = {
-    get: get,
+    getUser: getUser,
+    getUsers: getUsers,
     create: create,
     remove: remove,
     replace: replace,

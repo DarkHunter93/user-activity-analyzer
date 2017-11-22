@@ -10,7 +10,6 @@ const express = require('express'),
 
 router.get('/search', (req, res) => {
     if (Object.keys(req.query).length === 1 && req.query.login) {
-        console.log(req.query);
         user.search(req.query, (error, isFound) => {
             if (error) {
                 res.status(error.status).json({ message: error.message });
@@ -27,8 +26,19 @@ router.get('/search', (req, res) => {
     }
 });
 
+//TODO autoryzacja extended
+router.get('/', (req, res) => {
+    user.getUsers((error, data) => {
+        if (error) {
+            res.status(error.status).json({ message: error.message });
+        } else {
+            res.json({ users: data, count: data.length });
+        }
+    });
+});
+
 router.get('/:userId', [auth.checkToken, auth.basic], (req, res) => {
-    user.get(req.params.userId, (error, user) => {
+    user.getUser(req.params.userId, (error, user) => {
         if (error) {
             res.status(error.status).json({ message: error.message });
         } else {

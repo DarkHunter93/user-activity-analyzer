@@ -30,9 +30,7 @@ function create(user, callback) {
         } else {
             let newUser = Object.assign(new User(), user);
             newUser.id = UUID();
-            console.log(newUser);
             newUser.password = newUser.generateHash(user.password);
-            console.log(newUser);
             newUser.save((error) => {
                 if (error) {
                     callback(createError(500, error.message));
