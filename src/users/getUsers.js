@@ -7,6 +7,8 @@
 let createError = require('../createError'),
     User = require('../../models/user');
 
+//TODO limit i offset i next
+
 function get(callback) {
     User.find({}, '-_id -__v -password -admin -rights -settings')
         .exec((error, data) => {

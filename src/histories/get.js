@@ -4,8 +4,6 @@
 
 'use strict';
 
-const queryString = require('querystring');
-
 let createError = require('../createError'),
     History = require('../../models/history'),
     paging = require('../paging');
@@ -35,6 +33,8 @@ function get(offset, limit, sort, searchingProperties, pathName, callback) {
         return callback(createError(409, 'Max limit is 1000'));
     }
 
+//TODO użycie Promise
+
     History.find(searchingProperties, `-_id -__v -websiteContent.urls`, {
         skip: offset,
         limit: limit,
@@ -45,7 +45,24 @@ function get(offset, limit, sort, searchingProperties, pathName, callback) {
         if (error) {
             return callback(createError(500, error.message));
         } else {
-            return callback(null, paging(pathName, offset, limit, searchingProperties, data));
+            History.count({}, (error, count) => {
+                if (count > offset + limit) {
+                    return callback(null, {
+                        data: data,
+                        count: data.length,
+                        maxCount: count,
+                        next: paging(pathName, offset, limit, searchingProperties)
+                    });
+                } else if (count) {
+                    return callback(null, {
+                        data: data,
+                        count: data.length,
+                        maxCount: count
+                    });
+                } else {
+                    return callback(createError(500, 'Internal Server Error'));
+                }
+            });
         }
     });
 }

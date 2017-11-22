@@ -20,9 +20,11 @@ router.get('/', (req, res) => {
             res.status(error.status).json({ message: error.message });
         } else {
             res.json({
-                count: data.length,
+                maxCount: data.maxCount,
+                count: data.count,
                 data: data.data,
-                next:  data.next });
+                next:  data.next
+            });
         }
     });
 });

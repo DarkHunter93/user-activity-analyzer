@@ -4,25 +4,17 @@
 
 'use strict';
 
-function paging(pathName, offset, limit, searchingProperties, data) {
+const queryString = require('querystring');
+
+function paging(pathName, offset, limit, searchingProperties) {
+
     let next = `${pathName}?offset=${offset+limit}&limit=${limit}`;
 
     if (Object.keys(searchingProperties).length !== 0) {
         next += `&${queryString.stringify(searchingProperties)}`;
     }
 
-    if (data.length !== 0 && data.length === limit) {
-        return {
-            length: data.length,
-            data: data,
-            next: next
-        };
-    } else {
-        return {
-            length: data.length,
-            data: data
-        };
-    }
+    return next;
 }
 
 module.exports = paging;

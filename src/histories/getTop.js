@@ -40,7 +40,10 @@ function getTop(offset, limit, aggregateBy, userId, pathName, callback) {
                 if (error) {
                     return callback(createError(500, error.message));
                 } else {
-                    paging(pathName, offset, limit, aggregateBy, doMapping(data, aggregateBy));
+                    return callback(null, {
+                        data: doMapping(data, aggregateBy),
+                        count: data.count
+                    });
                 }
             }
         );
@@ -57,7 +60,10 @@ function getTop(offset, limit, aggregateBy, userId, pathName, callback) {
                 if (error) {
                     return callback(createError(500, error.message));
                 } else {
-                    paging(pathName, offset, limit, aggregateBy, doMapping(data, aggregateBy));
+                    return callback(null, {
+                        data: doMapping(data, aggregateBy),
+                        count: data.count
+                    });
                 }
             }
         );

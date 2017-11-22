@@ -1,7 +1,5 @@
 'use strict';
 
-//TODO DELETE /history
-
 const express = require('express'),
     user = require('../src/users/user'),
     history = require('../src/histories/history'),
