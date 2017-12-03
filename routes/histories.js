@@ -83,13 +83,8 @@ router.get('/previous', (req, res) => {
 router.get('/search', (req, res) => {
     let offset = parseInt(req.query.offset) || 0,
         limit = parseInt(req.query.limit) || 10,
-        phrase = req.query.phrase,
-        exclusion = req.query.exclusion || null;
-
-    phrase = phrase.split(',');
-    exclusion = exclusion.split(',').map((item) => {
-        return `-${item}`;
-    });
+        phrase = req.query.phrase ? req.query.phrase.split(',') : null,
+        exclusion = req.query.exclusion ? req.query.exclusion.split(',').map((item) => { return `-${item}`; }) : [];
 
     if (phrase) {
         history.search(offset, limit, phrase, exclusion, (error, data) => {

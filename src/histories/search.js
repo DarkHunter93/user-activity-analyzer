@@ -8,7 +8,7 @@ let createError = require('../createError'),
     History = require('../../models/history');
 
 //TODO check if everything works good when exclusion is null
-function search(offset, limit, phrase, exclusion = null, callback) {
+function search(offset, limit, phrase, exclusion = [], callback) {
 
     History
         .find({ $text: { $search: `${phrase.join(' ')} ${exclusion.join(' ')}` }})
