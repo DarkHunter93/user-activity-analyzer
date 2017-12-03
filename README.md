@@ -37,3 +37,6 @@ For documentation, visit: http://user-activity-analyzer.herokuapp.com/docs.html
 * handling _event_ property in history model (done)
 * count _timeSpent_ property
 * add account creation time in user model
+* search words in websiteContent.text properties (indexing)
+* paging for GET /histories/search
+* implement exact phrase in history.search() method

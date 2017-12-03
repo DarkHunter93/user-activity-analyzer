@@ -237,3 +237,32 @@
  *       500:
  *         description: Internal Server Error
  */
+
+// GET /histories/search
+/**
+ * @swagger
+ * /histories/search:
+ *   get:
+ *     description: Search for a keyword in global history
+ *     tags: [Histories]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: query
+ *         name: phrase
+ *         type: string
+ *         required: true
+ *         description: "E.g. phrase=firstWord,secondWord,thirdWord"
+ *       - in: query
+ *         name: exclusion
+ *         type: string
+ *         required: false
+ *         description: "Exclude a word"
+ *     responses:
+ *       200:
+ *         description: Ok
+ *       500:
+ *         description: Internal Server Error
+ */

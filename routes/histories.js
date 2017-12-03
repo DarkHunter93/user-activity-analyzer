@@ -80,4 +80,28 @@ router.get('/previous', (req, res) => {
     }
 });
 
+router.get('/search', (req, res) => {
+    let offset = parseInt(req.query.offset) || 0,
+        limit = parseInt(req.query.limit) || 10,
+        phrase = req.query.phrase,
+        exclusion = req.query.exclusion || null;
+
+    phrase = phrase.split(',');
+    exclusion = exclusion.split(',').map((item) => {
+        return `-${item}`;
+    });
+
+    if (phrase) {
+        history.search(offset, limit, phrase, exclusion, (error, data) => {
+            if (error) {
+                res.status(error.status).json({ message: error.message });
+            } else {
+                res.json({ data: data });
+            }
+        });
+    } else {
+        res.status(422).json({ message: 'Phrase parameter is null or undefined' });
+    }
+});
+
 module.exports = router;

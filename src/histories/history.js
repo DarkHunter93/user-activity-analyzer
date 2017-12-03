@@ -5,11 +5,13 @@
 let create = require('./create'),
     get = require('./get'),
     getTop = require('./getTop'),
-    getPrevious = require('./getPrevious');
+    getPrevious = require('./getPrevious'),
+    search = require('./search');
 
 module.exports = {
     get: get,
     getTop: getTop,
     getPrevious: getPrevious,
-    create: create
+    create: create,
+    search: search
 };
