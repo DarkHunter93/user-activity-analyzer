@@ -34,5 +34,5 @@ For documentation, visit: http://user-activity-analyzer.herokuapp.com/docs.html
 * implement more options for matchBy and matchUrl parameters in getPrevious method
 * implement limit and offset parameters for path GET /users
 * handling histories record after delete user
-* handling _type_ property in history model
+* handling _event_ property in history model (done)
 * count _timeSpent_ property

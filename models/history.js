@@ -14,10 +14,6 @@ module.exports = mongoose.model('History', new Schema({
         text: {
             type: String,
             required: true
-        },
-        urls: {
-            type: Array,
-            required: false
         }
     },
     url: {
@@ -80,15 +76,9 @@ module.exports = mongoose.model('History', new Schema({
             required: false
         }
     },
-    connection: {
-        url: {
-            type: String,
-            required: false
-        },
-        title: {
-            type: String,
-            required: false
-        }
+    event: {
+        type: String,
+        required: false
     },
     date: {
         type: Date,
