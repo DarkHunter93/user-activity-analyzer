@@ -29,7 +29,7 @@ For documentation, visit: http://user-activity-analyzer.herokuapp.com/docs.html
 * paging for GET /histories/previous
 * extended authorization
 * return count of users on path GET /users
-* return websiteContent only if user send special parameter in query
+* return websiteContent only if user send special parameter in query (done)
 * implement getPrevious method for individual website (not only for global scope)
 * implement more options for matchBy and matchUrl parameters in getPrevious method
 * implement limit and offset parameters for path GET /users

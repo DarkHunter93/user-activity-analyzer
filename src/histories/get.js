@@ -8,7 +8,7 @@ let createError = require('../createError'),
     History = require('../../models/history'),
     paging = require('../paging');
 
-function get(offset, limit, sort, searchingProperties, pathName, callback) {
+function get(offset, limit, sort, websiteContent, searchingProperties, pathName, callback) {
 
     // let keys = Object.keys(searchingProperties);
     // keys.forEach((item, index) => {
@@ -31,7 +31,8 @@ function get(offset, limit, sort, searchingProperties, pathName, callback) {
 
 //TODO use Promise
 
-    History.find(searchingProperties, `-_id -__v -websiteContent.urls`, {
+    History.find(searchingProperties, `-_id -__v -websiteContent.urls
+        ${websiteContent === false ? '-websiteContent' : ''}`, {
         skip: offset,
         limit: limit,
         sort: {

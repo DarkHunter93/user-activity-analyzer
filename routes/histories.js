@@ -5,17 +5,19 @@ const express = require('express'),
     auth = require('../src/auth/auth'),
     router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/', auth.checkToken, (req, res) => {
     let offset = parseInt(req.query.offset) || 0,
         limit = parseInt(req.query.limit) || 100,
         sort = req.query.sort || -1,
+        websiteContent = req.query.websiteContent || false,
         request = req;
 
     if (req.query.offset) delete request.query.offset;
     if (req.query.limit) delete request.query.limit;
     if (req.query.sort) delete request.query.sort;
+    if (req.query.websiteContent) delete request.query.websiteContent;
 
-    history.get(offset, limit, sort, request.query, req.originalUrl, (error, data) => {
+    history.get(offset, limit, sort, websiteContent, request.query, req.originalUrl, (error, data) => {
         if (error) {
             res.status(error.status).json({ message: error.message });
         } else {
