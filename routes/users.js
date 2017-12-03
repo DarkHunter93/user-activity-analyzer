@@ -24,7 +24,6 @@ router.get('/search', (req, res) => {
     }
 });
 
-//TODO autoryzacja extended
 router.get('/', (req, res) => {
     user.getUsers((error, data) => {
         if (error) {

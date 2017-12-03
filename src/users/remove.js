@@ -7,8 +7,6 @@
 let createError = require('../createError'),
     User = require('../../models/user');
 
-//TODO obsłużyć kolekcję history przy usuwaniu użytkownika
-
 function remove(userId, callback) {
     User.remove({ id: userId }, (error) => {
         if (error) {

@@ -8,10 +8,6 @@ let createError = require('../createError'),
     History = require('../../models/history'),
     paging = require('../paging');
 
-//TODO zwracanie ilości rekordów w histories
-//TODO zwracanie ilości użytkowników w bazie danych
-//TODO websiteContent = true jako query
-
 function get(offset, limit, sort, searchingProperties, pathName, callback) {
 
     // let keys = Object.keys(searchingProperties);
@@ -33,7 +29,7 @@ function get(offset, limit, sort, searchingProperties, pathName, callback) {
         return callback(createError(409, 'Max limit is 1000'));
     }
 
-//TODO użycie Promise
+//TODO use Promise
 
     History.find(searchingProperties, `-_id -__v -websiteContent.urls`, {
         skip: offset,

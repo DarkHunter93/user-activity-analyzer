@@ -7,8 +7,6 @@
 let createError = require('../createError'),
     User = require('../../models/user');
 
-//TODO raz działa, raz nie, nie wiem dlaczego, do sprawdzenia
-
 function replace(userId, newUser, callback) {
     User.findOne({ login: newUser.login }, (error, user) => {
         if (error) {

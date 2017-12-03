@@ -1,9 +1,3 @@
-//TODO 48h żywotności
-//TODO maksymalna ilość znaków dla loginu
-//TODO regex dla emaila
-//TODO update dokumentacji o Patch i Put
-//TODO nowe konta i przeklejenie ID
-
 'use strict';
 
 let express = require('express'),

@@ -61,10 +61,6 @@ let userSchema = mongoose.Schema({
 	}
 });
 
-//TODO dodawanie elementów do tablicy blackList
-//TODO sprawdzić, czy dodawanie property firm działa
-//TODO stronicowanie
-
 // generating a hash
 userSchema.methods.generateHash = (item) => {
     return bcrypt.hashSync(item, bcrypt.genSaltSync(8), null);
