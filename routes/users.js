@@ -25,7 +25,10 @@ router.get('/search', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-    user.getUsers((error, data) => {
+    let offset = parseInt(req.query.offset) || 0,
+        limit = parseInt(req.query.limit) || 100;
+
+    user.getUsers(offset, limit, (error, data) => {
         if (error) {
             res.status(error.status).json({ message: error.message });
         } else {

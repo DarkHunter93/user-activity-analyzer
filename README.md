@@ -32,7 +32,8 @@ For documentation, visit: http://user-activity-analyzer.herokuapp.com/docs.html
 * return websiteContent only if user send special parameter in query (done)
 * implement getPrevious method for individual website (not only for global scope)
 * implement more options for matchBy and matchUrl parameters in getPrevious method
-* implement limit and offset parameters for path GET /users
+* implement limit and offset parameters for path GET /users (done)
 * handling histories record after delete user
 * handling _event_ property in history model (done)
 * count _timeSpent_ property
+* add account creation time in user model
