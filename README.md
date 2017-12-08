@@ -15,7 +15,7 @@ For documentation, visit: http://user-activity-analyzer.herokuapp.com/docs.html
 ## Todo list
 
 * update docs
-* maximal count characters for user login (username)
+DONE * maximal count characters for user login (username)
 * check if email address is valid (regex)
 * check if birthday is valid (regex)
 * save blacklist to the database
